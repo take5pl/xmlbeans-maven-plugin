@@ -22,36 +22,31 @@ package org.codehaus.mojo.xmlbeans;
  * SOFTWARE.
  */
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractPlugin;
 import org.apache.maven.plugin.PluginExecutionRequest;
 import org.apache.maven.plugin.PluginExecutionResponse;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.artifact.Artifact;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.io.File;
 
 /**
+ * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @version $Id$
  * @goal java
- *
  * @phase generate-sources
- *
  * @description Creates java beans from the XML schema.
- *
  * @todo improve parameters using lists when plexus is capable of it
- *
  * @parameter name="targetDirectory" type="String" required="true" validator="" expression="#project.build.directory/generated-sources/xmlbeans" description="The output directory."
  * @parameter name="sourceSchemas" type="String" required="true" validator="" expression="" description="The source schema list."
  * @parameter name="xmlConfigs" type="String" required="true" validator="" expression="" description="The XBean configurations."
  * @parameter name="resolverCatalog" type="String" required="true" validator="" expression="" description="The resolver catalog."
  * @parameter name="dependencies" type="String" required="false" validator="" expression="" defaultValue="" description="The dependencies to add to the classpath."
  * @parameter name="project" type="String" required="true" validator="" expression="#project" description="The Maven project."
- *
- * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
  */
 public class SchemaMojo
     extends AbstractPlugin
@@ -96,7 +91,8 @@ public class SchemaMojo
         }
 
         File basedir = project.getFile().getParentFile();
-        SchemaCompilerWrapper.compileSchemas( basedir, sourceSchemas, xmlConfigs, targetDirectory, resolverCatalog, artifacts );
+        File resolver = new File( basedir, resolverCatalog );
+        SchemaCompilerWrapper.compileSchemas( basedir, sourceSchemas, xmlConfigs, targetDirectory, resolver, artifacts );
 
         project.addCompileSourceRoot( targetDirectory );
     }

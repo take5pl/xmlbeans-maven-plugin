@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 
 /**
@@ -40,7 +39,7 @@ public class SchemaCompilerWrapper
 {
 
     public static void compileSchemas( File baseDirectory, String sourceSchemas, String xmlConfigs, String targetDir,
-                                       String catalogLocation, List classpath )
+                                       File catalogLocation, List classpath )
         throws Exception
     {
         List schemas = FileUtils.getFiles( baseDirectory, sourceSchemas, null );
@@ -51,7 +50,7 @@ public class SchemaCompilerWrapper
         if ( catalogLocation != null )
         {
             CatalogManager catalogManager = CatalogManager.getStaticManager();
-            catalogManager.setCatalogFiles( catalogLocation );
+            catalogManager.setCatalogFiles( catalogLocation.getAbsolutePath() );
             entityResolver = new PassThroughResolver( new CatalogResolver() );
         }
 
