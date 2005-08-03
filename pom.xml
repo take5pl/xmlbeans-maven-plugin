@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <project>
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -8,32 +10,53 @@
   <artifactId>maven-xmlbeans-plugin</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-  <name>Maven XMLBeans Plugin</name>
+  <name>Maven XML Beans Plugin</name>
   <dependencies>
     <dependency>
       <groupId>plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.0-alpha-1</version>
+      <version>1.0-alpha-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>2.0-SNAPSHOT</version>
+      <artifactId>maven-project</artifactId>
+      <version>2.0-alpha-3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>2.0-SNAPSHOT</version>
+      <artifactId>maven-artifact-manager</artifactId>
+      <version>2.0-alpha-3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <version>1.0-alpha-4</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>xml-resolver</groupId>
       <artifactId>xml-resolver</artifactId>
       <version>1.1</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>xmlbeans</groupId>
-      <artifactId>xbean-apache</artifactId>
-      <version>1.0-DEV</version>
+      <artifactId>xbean</artifactId>
+      <version>2.0.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax</artifactId>
+      <version>1.1.1-dev</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>stax</groupId>
+      <artifactId>stax-api</artifactId>
+      <version>1.0</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>
