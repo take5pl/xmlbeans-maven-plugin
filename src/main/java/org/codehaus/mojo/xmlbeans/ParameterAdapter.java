@@ -43,7 +43,7 @@ public final class ParameterAdapter
     * @return Parameters for the schema compiler
     */
    static SchemaCompiler.Parameters getCompilerParameters(final PluginProperties properties)
-      throws DependencyResolutionRequiredException
+      throws DependencyResolutionRequiredException, XmlBeansException
    {
       SchemaCompiler.Parameters params = new SchemaCompiler.Parameters();
 

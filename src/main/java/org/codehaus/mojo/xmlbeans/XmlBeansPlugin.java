@@ -18,6 +18,7 @@ package org.codehaus.mojo.xmlbeans;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.ArrayList;
@@ -30,8 +31,10 @@ import org.apache.xmlbeans.impl.tool.SchemaCompiler;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
 import org.xml.sax.EntityResolver;
 
@@ -66,8 +69,7 @@ public class XmlBeansPlugin
     * Not a path reference.  If multiple schema files need to be built together,
     * use a nested fileset instead of setting schema.
     *
-    * @parameter expression="${sourceSchemas}"
-    * @parameter default-value="empty"
+    * @parameter
     * @optional
     */
    private String sourceSchemas;
@@ -75,7 +77,7 @@ public class XmlBeansPlugin
    /**
     * The directory where .xsd files are to be found.
     *
-    * @parameter expression="${schemaDirectory}"
+    * @parameter default-value="${basedir}/src/xsd"
     * @required
     */
    private File schemaDirectory;
@@ -84,7 +86,7 @@ public class XmlBeansPlugin
     * Define the name of the jar file created.  For instance, "myXMLBean.jar"
     * will output the results of this task into a jar with the same name.
     *
-    * @parameter expression="${outputJar}"
+    * @parameter
     * @optional
     */
    private File outputJar;
@@ -94,7 +96,7 @@ public class XmlBeansPlugin
     * includes.  Defaults to false, meaning all imports and includes must
     * be copied locally.
     *
-    * @parameter expression="${download}" default-value="false"
+    * @parameter default-value="false"
     * @optional
     */
    private boolean download;
@@ -124,7 +126,7 @@ public class XmlBeansPlugin
     * line argument will be used). If set to true, the value of the debug
     * level attribute determines the command line argument.
     *
-    * @parameter expression="${maven.compiler.debug}"
+    * @parameter" default-value="false"
     * @optional
     */
    private boolean debug;
@@ -134,7 +136,7 @@ public class XmlBeansPlugin
     * externally; ignored otherwise. Defaults to the standard VM memory setting.
     * (Examples: 83886080, 81920k, or 80m)
     *
-    * @parameter expression="${memoryInitialSize}"
+    * @parameter
     * @optional
     */
    private String memoryInitialSize;
@@ -144,7 +146,7 @@ public class XmlBeansPlugin
     * externally; ignored otherwise. Defaults to the standard VM memory setting.
     * (Examples: 83886080, 81920k, or 80m)
     *
-    * @parameter expression="${memoryMaximumSize}"
+    * @parameter
     * @optional
     */
    private String memoryMaximumSize;
@@ -154,7 +156,7 @@ public class XmlBeansPlugin
     * value of the build.compiler property, if set, will be used. Otherwise,
     * the default compiler for the current VM will be used.
     *
-    * @parameter expression="${compiler}"
+    * @parameter
     * @optional
     */
    private String compiler;
@@ -162,23 +164,23 @@ public class XmlBeansPlugin
    /**
     * Controls the amount of build message output.
     *
-    * @parameter expression="${verbose}" default-value="true"
+    * @parameter default-value="false"
     * @optional
     */
-   private boolean verbose = true;
+   private boolean verbose;
 
    /**
-    * Controls the amount of build message output.
+    * Supress the normal amount of console output.
     *
-    * @parameter expression="${quiet}" default-value="false"
+    * @parameter default-value="true"
     * @optional
     */
-   private boolean quiet = false;
+   private boolean quiet;
 
    /**
     * Do not enforce the unique particle attribution rule.
     *
-    * @parameter expression="${noUpa}" default-value="false"
+    * @parameter default-value="false"
     * @optional
     */
    private boolean noUpa;
@@ -186,7 +188,7 @@ public class XmlBeansPlugin
    /**
     * Do not enforce the particle valid (restriction) rule.
     *
-    * @parameter expression="${noPvr}" default-value="false"
+    * @parameter default-value="false"
     * @optional
     */
    private boolean noPvr;
@@ -194,7 +196,7 @@ public class XmlBeansPlugin
    /**
     * Todo: Unkown use.
     *
-    * @parameter expression="${jaxb}" default-value="false"
+    * @parameter default-value="false"
     * @optional
     */
    private boolean jaxb;
@@ -202,7 +204,7 @@ public class XmlBeansPlugin
    /**
     * Don't compile the generated source files.
     *
-    * @parameter expression="${noJavac}" default-value="false"
+    * @parameter default-value="false"
     * @optional
     */
    private boolean noJavac;
@@ -211,19 +213,34 @@ public class XmlBeansPlugin
     * Configuration files used by the object generator. For more information
     * about the format of these files, see Todo.
     *
-    * @parameter expression="${xmlConfigs}"
+    * @number MOJO-54
+    * @parameter
     * @optional
     */
-   private String xmlConfigs;
+   private List xmlConfigs;
+   
+   /**
+    * Default xmlConfigs directory. If no xmlConfigs list is specified, this
+    * one is checked automatically.
+    * 
+    * @number MOJO-54
+    * @parameter expression="${basedir}/src/xsdconfig"
+    */
+   private File defaultXmlConfigDir;
 
    /**
     * Todo: Unknown use.
     *
-    * @parameter expression="${catalogLocation}"
+    * @parameter
     * @optional
     */
    private String catalogLocation;
 
+   /**
+    * @parameter expression="${plugin.artifacts}"
+    * @required
+    */
+   private List pluginArtifacts;
 
    /**
     * The repository for libraries we depend on.
@@ -233,6 +250,13 @@ public class XmlBeansPlugin
     * @readonly
     */
    private ArtifactRepository localRepository;
+
+   /**
+    * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
+    * @required
+    * @readonly
+    */
+   private ArtifactFactory factory;
 
    /**
     * A reference to the Maven Project metadata.
@@ -273,7 +297,7 @@ public class XmlBeansPlugin
          SchemaCompiler.Parameters compilerParams = ParameterAdapter.getCompilerParameters(this);
 
          compilerParams.getSrcDir().mkdirs();
-
+         
          boolean result = SchemaCompiler.compile(compilerParams);
 
          if (!result)
@@ -299,7 +323,7 @@ public class XmlBeansPlugin
          throw new XmlBeansException(XmlBeansException.CLASSPATH_DEPENDENCY, drre);
       }
    }
-
+   
    /**
     * Check the required parameters for values. Report an error if something
     * isn't quite right.
@@ -315,18 +339,6 @@ public class XmlBeansPlugin
       if (schemaDirectory == null)
       {
          throw new XmlBeansException(XmlBeansException.MISSING_SCHEMA_DIRECTORY);
-      }
-
-      if (project.getBuild() != null)
-      {
-         if (project.getBuild().getScriptSourceDirectory() == null)
-         {
-            // TODO. add to string buffer.
-         }
-      }
-      else
-      {
-         // TODO. add to string buffer.
       }
 
       if (errors.length() > 0)
@@ -359,6 +371,9 @@ public class XmlBeansPlugin
    /**
     * Returns a classpath for the compiler made up of artifacts from the project.
     *
+    * @number MOJO-54, MNG-1044
+    * 
+    * 
     * @throws DependencyResolutionRequiredException Maven dependencies weren't set.
     *
     * @return Array of classpath entries.
@@ -367,9 +382,31 @@ public class XmlBeansPlugin
       throws DependencyResolutionRequiredException
    {
       Set artifacts = project.getArtifacts();
+      
       File[] results = null;
       if (artifacts != null)
       {
+    	  Iterator plugins = project.getPluginArtifacts().iterator();
+          while ( plugins.hasNext() )
+          {
+              Artifact artifact = (Artifact) plugins.next();
+              if ( "xmlbeans-maven-plugin".equalsIgnoreCase( artifact.getArtifactId() ) )
+              {
+            	  getLog().debug("Found the xml beans plugin. Adding to classpath");
+            	  File artifactFile = artifact.getFile();
+            	  if (artifactFile != null) {
+                	  getLog().info("ArtifactFile wasn't null!");
+	            	  artifact = factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
+	            			  artifact.getVersion(), Artifact.SCOPE_COMPILE,
+	            			  artifact.getType() );
+	            	  artifact.setFile(artifactFile);
+	                  artifacts.add(artifact);
+            	  } else {
+            		  getLog().warn("The xml bean plugin artifact file was null.");
+            		  getLog().warn("You must explicitly add the plugin dependencies to your project to successfully compile.");
+            	  }
+              }
+          }
          results = new File[artifacts.size()];
 
          Artifact nextArtifact = null;
@@ -377,6 +414,7 @@ public class XmlBeansPlugin
          for (Iterator i = artifacts.iterator(); i.hasNext(); )
          {
             nextArtifact = (Artifact) i.next();
+            getLog().debug("The next artifact's file: " + nextArtifact.getFile());
             results[j] = nextArtifact.getFile();
             j++;
          }
@@ -402,27 +440,83 @@ public class XmlBeansPlugin
 
    /**
     * Returns configuration files identified in the xmlConfigs string passed
-    * by the project configuration.
+    * by the project configuration. If none were identified, a check is made
+    * for the default xsd config directory src/xsdconfig.
     *
+    * @number MOJO-54
     * @return An array of configuration files.
     */
-   public final File[] getConfigFiles()
+   public final File[] getConfigFiles() throws XmlBeansException
    {
-
-      if (xmlConfigs != null)
+	   getLog().debug("Creating a list of config files.");
+	   try {
+		   if ( xmlConfigs != null) {
+			   return (File[])getFileList(xmlConfigs).toArray(new File[] {});
+		   } else if (defaultXmlConfigDir.exists()){
+			   List defaultDir = new ArrayList();
+			   defaultDir.add(defaultXmlConfigDir);
+			   return (File[])getFileList(defaultDir).toArray(new File[] {});
+		   } else {
+			   return null;
+		   }
+	   } catch (XmlBeansException xmlbe) {
+		   throw new XmlBeansException(XmlBeansException.INVALID_CONFIG_FILE, xmlbe);
+	   }
+   }
+   
+   /**
+    * Recursively travers the file list and it's subdirs and produce
+    * a single flat list of the files.
+    * 
+    * @number MOJO-54
+    * @param fileList
+    * @return
+    */
+   private final List getFileList(List fileList) throws XmlBeansException 
+   {
+	   
+      if (fileList != null)
       {
-         List configs = new ArrayList();
-         for (StringTokenizer st = new StringTokenizer(xmlConfigs, ","); st.hasMoreTokens();)
+         getLog().debug("A list was given.");
+         List files = new ArrayList();
+
+         File nextFile = null;
+         ArrayList nextDir = new ArrayList();
+         for (Iterator i = fileList.iterator(); i.hasNext(); ) 
          {
-            String configName = st.nextToken();
-            configs.add(new File(configName));
+        	 nextFile = (File)i.next();
+        	 if (nextFile.exists()) {
+        		 // scrub for "hidden" files beginning with '.'
+        		 if (nextFile.getName().indexOf('.') < 0) {
+		        	 if (nextFile.isDirectory()) 
+		        	 {
+		                 getLog().debug("One entry was a directory. Getting its children too.");
+		        		 File[] children = nextFile.listFiles();
+		        		 for (int j = 0; j < children.length; j++) 
+		        		 {
+		            		 nextDir.clear();
+		            		 nextDir.add(children[j]);
+		            		 files.addAll(getFileList(nextDir));
+		        		 }
+		        	 }
+		        	 else
+		        	 {
+		                 getLog().debug("Adding file " + nextFile.getAbsolutePath());
+		        		 files.add(nextFile);
+		        	 }
+        		 }
+        	 } else {
+        		 throw new XmlBeansException(XmlBeansException.MISSING_FILE, nextFile.getAbsolutePath());
+        	 }
          }
-         return (File[]) configs.toArray(new File[] {});
+    	 return files;
       }
       else
       {
+          getLog().debug("No list was given. Returning.");
          return null;
       }
+	  
    }
 
    /**

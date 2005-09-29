@@ -1,0 +1,53 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>xmlbeans-mojo-54</artifactId>
+  <groupId>org.codehaus.mojo</groupId>
+  <version>1.0</version>
+  <packaging>jar</packaging>
+  <name>Test Case for MOJO-54</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xmlbeans-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <executions>
+           <execution>
+              <goals>
+                 <goal>xmlbeans</goal>
+              </goals>
+           </execution>
+        </executions>
+        <inherited>true</inherited>
+        <configuration>
+           <xmlConfigs>
+              <xmlConfig implementation="java.io.File">src/xsdconfig</xmlConfig>
+              <xmlConfig implementation="java.io.File">src/xsdconfig2/explicit.xsdconfig</xmlConfig>
+           </xmlConfigs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+   <dependency>
+       <groupId>stax</groupId>
+       <artifactId>stax</artifactId>
+       <version>1.1.1-dev</version>
+       <scope>compile</scope>
+   </dependency>
+   <dependency>
+       <groupId>stax</groupId>
+       <artifactId>stax-api</artifactId>
+       <version>1.0</version>
+       <scope>compile</scope>
+   </dependency>
+   <dependency>
+     <groupId>xmlbeans</groupId>
+     <artifactId>xbean</artifactId>
+     <version>2.0.0</version>
+     <scope>compile</scope>
+   </dependency>
+  </dependencies>
+  <!--
+-->
+</project>

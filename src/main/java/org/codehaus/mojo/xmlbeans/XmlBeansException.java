@@ -49,6 +49,10 @@ public class XmlBeansException
 
    /** Something went wrong while looking up the classpath. */
    public static final Error CLASSPATH_DEPENDENCY = new Error("classpath.dependency");
+   
+   public static final Error MISSING_FILE = new Error("file.missing");
+   
+   public static final Error INVALID_CONFIG_FILE = new Error("file.config.missing");
 
    /**
     * The handle to the resource bundle containing the errors. 

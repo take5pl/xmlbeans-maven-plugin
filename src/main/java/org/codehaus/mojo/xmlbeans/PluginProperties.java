@@ -41,7 +41,7 @@ interface PluginProperties
     *
     * @return An array of configuration files.
     */
-   File[] getConfigFiles();
+   File[] getConfigFiles() throws XmlBeansException;
 
    /**
     * Returns a file array of xsd files to translate to object models.
