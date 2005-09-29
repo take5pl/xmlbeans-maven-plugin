@@ -218,11 +218,11 @@ public class XmlBeansPlugin
     * @optional
     */
    private List xmlConfigs;
-   
+
    /**
     * Default xmlConfigs directory. If no xmlConfigs list is specified, this
     * one is checked automatically.
-    * 
+    *
     * @number MOJO-54
     * @parameter expression="${basedir}/src/xsdconfig"
     */
@@ -274,11 +274,13 @@ public class XmlBeansPlugin
     */
    private EntityResolver entityResolver;
 
-   /**
-    * Empty constructor for the XML Beans plugin.
-    */
-   public XmlBeansPlugin() {
-   }
+    private static final File[] EMPTY_FILE_ARRAY = new File[0];
+
+    /**
+     * Empty constructor for the XML Beans plugin.
+     */
+    public XmlBeansPlugin() {
+    }
 
    /**
     * <p>Map the parameters to the schema compilers parameter object, make
@@ -297,7 +299,7 @@ public class XmlBeansPlugin
          SchemaCompiler.Parameters compilerParams = ParameterAdapter.getCompilerParameters(this);
 
          compilerParams.getSrcDir().mkdirs();
-         
+
          boolean result = SchemaCompiler.compile(compilerParams);
 
          if (!result)
@@ -323,7 +325,7 @@ public class XmlBeansPlugin
          throw new XmlBeansException(XmlBeansException.CLASSPATH_DEPENDENCY, drre);
       }
    }
-   
+
    /**
     * Check the required parameters for values. Report an error if something
     * isn't quite right.
@@ -372,59 +374,41 @@ public class XmlBeansPlugin
     * Returns a classpath for the compiler made up of artifacts from the project.
     *
     * @number MOJO-54, MNG-1044
-    * 
-    * 
-    * @throws DependencyResolutionRequiredException Maven dependencies weren't set.
+    *
     *
     * @return Array of classpath entries.
     */
    public final File[] getClasspath()
-      throws DependencyResolutionRequiredException
    {
-      Set artifacts = project.getArtifacts();
-      
-      File[] results = null;
-      if (artifacts != null)
-      {
-    	  Iterator plugins = project.getPluginArtifacts().iterator();
-          while ( plugins.hasNext() )
-          {
-              Artifact artifact = (Artifact) plugins.next();
-              if ( "xmlbeans-maven-plugin".equalsIgnoreCase( artifact.getArtifactId() ) )
-              {
-            	  getLog().debug("Found the xml beans plugin. Adding to classpath");
-            	  File artifactFile = artifact.getFile();
-            	  if (artifactFile != null) {
-                	  getLog().info("ArtifactFile wasn't null!");
-	            	  artifact = factory.createArtifact( artifact.getGroupId(), artifact.getArtifactId(),
-	            			  artifact.getVersion(), Artifact.SCOPE_COMPILE,
-	            			  artifact.getType() );
-	            	  artifact.setFile(artifactFile);
-	                  artifacts.add(artifact);
-            	  } else {
-            		  getLog().warn("The xml bean plugin artifact file was null.");
-            		  getLog().warn("You must explicitly add the plugin dependencies to your project to successfully compile.");
-            	  }
-              }
-          }
-         results = new File[artifacts.size()];
+       List results = new ArrayList( project.getArtifacts().size() + project.getPluginArtifacts().size() );
+       for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
+       {
+           Artifact a = (Artifact) i.next();
+           if ( a.getFile() != null )
+           {
+               results.add( a.getFile() );
+           }
+       }
 
-         Artifact nextArtifact = null;
-         int j = 0;
-         for (Iterator i = artifacts.iterator(); i.hasNext(); )
-         {
-            nextArtifact = (Artifact) i.next();
-            getLog().debug("The next artifact's file: " + nextArtifact.getFile());
-            results[j] = nextArtifact.getFile();
-            j++;
-         }
-      }
-      else
-      {
-         results = new File[0];
-      }
+       // TODO: use addArtifacts
+       Set set = new HashSet( project.getDependencyArtifacts() );
 
-      return results;
+       for ( Iterator i = pluginArtifacts.iterator(); i.hasNext(); )
+       {
+           Artifact a = (Artifact) i.next();
+           if ( a.getFile() != null )
+           {
+               results.add( a.getFile() );
+
+               a = factory.createArtifact( a.getGroupId(), a.getArtifactId(), a.getVersion(), Artifact.SCOPE_COMPILE,
+                                           a.getType() );
+               set.add( a );
+           }
+       }
+
+       project.setDependencyArtifacts( set );
+
+       return (File[]) results.toArray( EMPTY_FILE_ARRAY );
    }
 
    /**
@@ -463,18 +447,18 @@ public class XmlBeansPlugin
 		   throw new XmlBeansException(XmlBeansException.INVALID_CONFIG_FILE, xmlbe);
 	   }
    }
-   
+
    /**
     * Recursively travers the file list and it's subdirs and produce
     * a single flat list of the files.
-    * 
+    *
     * @number MOJO-54
     * @param fileList
     * @return
     */
-   private final List getFileList(List fileList) throws XmlBeansException 
+   private final List getFileList(List fileList) throws XmlBeansException
    {
-	   
+
       if (fileList != null)
       {
          getLog().debug("A list was given.");
@@ -482,17 +466,17 @@ public class XmlBeansPlugin
 
          File nextFile = null;
          ArrayList nextDir = new ArrayList();
-         for (Iterator i = fileList.iterator(); i.hasNext(); ) 
+         for (Iterator i = fileList.iterator(); i.hasNext(); )
          {
         	 nextFile = (File)i.next();
         	 if (nextFile.exists()) {
         		 // scrub for "hidden" files beginning with '.'
         		 if (nextFile.getName().indexOf('.') < 0) {
-		        	 if (nextFile.isDirectory()) 
+		        	 if (nextFile.isDirectory())
 		        	 {
 		                 getLog().debug("One entry was a directory. Getting its children too.");
 		        		 File[] children = nextFile.listFiles();
-		        		 for (int j = 0; j < children.length; j++) 
+		        		 for (int j = 0; j < children.length; j++)
 		        		 {
 		            		 nextDir.clear();
 		            		 nextDir.add(children[j]);
@@ -516,7 +500,7 @@ public class XmlBeansPlugin
           getLog().debug("No list was given. Returning.");
          return null;
       }
-	  
+
    }
 
    /**
