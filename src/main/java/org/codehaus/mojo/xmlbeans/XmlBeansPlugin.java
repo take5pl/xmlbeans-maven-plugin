@@ -471,7 +471,7 @@ public class XmlBeansPlugin
         	 nextFile = (File)i.next();
         	 if (nextFile.exists()) {
         		 // scrub for "hidden" files beginning with '.'
-        		 if (nextFile.getName().indexOf('.') < 0) {
+        		 if (nextFile.getName().indexOf('.') != 0) {
 		        	 if (nextFile.isDirectory())
 		        	 {
 		                 getLog().debug("One entry was a directory. Getting its children too.");
