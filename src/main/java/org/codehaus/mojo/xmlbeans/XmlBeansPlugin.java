@@ -70,7 +70,6 @@ public class XmlBeansPlugin
     * use a nested fileset instead of setting schema.
     *
     * @parameter
-    * @optional
     */
    private String sourceSchemas;
 
@@ -87,7 +86,6 @@ public class XmlBeansPlugin
     * will output the results of this task into a jar with the same name.
     *
     * @parameter
-    * @optional
     */
    private File outputJar;
 
@@ -97,7 +95,6 @@ public class XmlBeansPlugin
     * be copied locally.
     *
     * @parameter default-value="false"
-    * @optional
     */
    private boolean download;
 
@@ -126,8 +123,7 @@ public class XmlBeansPlugin
     * line argument will be used). If set to true, the value of the debug
     * level attribute determines the command line argument.
     *
-    * @parameter" default-value="false"
-    * @optional
+    * @parameter default-value="false"
     */
    private boolean debug;
 
@@ -137,7 +133,6 @@ public class XmlBeansPlugin
     * (Examples: 83886080, 81920k, or 80m)
     *
     * @parameter
-    * @optional
     */
    private String memoryInitialSize;
 
@@ -147,7 +142,6 @@ public class XmlBeansPlugin
     * (Examples: 83886080, 81920k, or 80m)
     *
     * @parameter
-    * @optional
     */
    private String memoryMaximumSize;
 
@@ -157,7 +151,6 @@ public class XmlBeansPlugin
     * the default compiler for the current VM will be used.
     *
     * @parameter
-    * @optional
     */
    private String compiler;
 
@@ -165,7 +158,6 @@ public class XmlBeansPlugin
     * Controls the amount of build message output.
     *
     * @parameter default-value="false"
-    * @optional
     */
    private boolean verbose;
 
@@ -173,7 +165,6 @@ public class XmlBeansPlugin
     * Supress the normal amount of console output.
     *
     * @parameter default-value="true"
-    * @optional
     */
    private boolean quiet;
 
@@ -181,7 +172,6 @@ public class XmlBeansPlugin
     * Do not enforce the unique particle attribution rule.
     *
     * @parameter default-value="false"
-    * @optional
     */
    private boolean noUpa;
 
@@ -189,7 +179,6 @@ public class XmlBeansPlugin
     * Do not enforce the particle valid (restriction) rule.
     *
     * @parameter default-value="false"
-    * @optional
     */
    private boolean noPvr;
 
@@ -197,7 +186,6 @@ public class XmlBeansPlugin
     * Todo: Unkown use.
     *
     * @parameter default-value="false"
-    * @optional
     */
    private boolean jaxb;
 
@@ -205,7 +193,6 @@ public class XmlBeansPlugin
     * Don't compile the generated source files.
     *
     * @parameter default-value="false"
-    * @optional
     */
    private boolean noJavac;
 
@@ -213,9 +200,7 @@ public class XmlBeansPlugin
     * Configuration files used by the object generator. For more information
     * about the format of these files, see Todo.
     *
-    * @number MOJO-54
     * @parameter
-    * @optional
     */
    private List xmlConfigs;
 
@@ -223,7 +208,6 @@ public class XmlBeansPlugin
     * Default xmlConfigs directory. If no xmlConfigs list is specified, this
     * one is checked automatically.
     *
-    * @number MOJO-54
     * @parameter expression="${basedir}/src/xsdconfig"
     */
    private File defaultXmlConfigDir;
@@ -232,7 +216,6 @@ public class XmlBeansPlugin
     * Todo: Unknown use.
     *
     * @parameter
-    * @optional
     */
    private String catalogLocation;
 
@@ -373,9 +356,6 @@ public class XmlBeansPlugin
    /**
     * Returns a classpath for the compiler made up of artifacts from the project.
     *
-    * @number MOJO-54, MNG-1044
-    *
-    *
     * @return Array of classpath entries.
     */
    public final File[] getClasspath()
@@ -427,7 +407,6 @@ public class XmlBeansPlugin
     * by the project configuration. If none were identified, a check is made
     * for the default xsd config directory src/xsdconfig.
     *
-    * @number MOJO-54
     * @return An array of configuration files.
     */
    public final File[] getConfigFiles() throws XmlBeansException
@@ -452,9 +431,8 @@ public class XmlBeansPlugin
     * Recursively travers the file list and it's subdirs and produce
     * a single flat list of the files.
     *
-    * @number MOJO-54
     * @param fileList
-    * @return
+    * @return files
     */
    private final List getFileList(List fileList) throws XmlBeansException
    {
