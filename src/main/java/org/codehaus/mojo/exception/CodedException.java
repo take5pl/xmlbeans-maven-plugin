@@ -24,7 +24,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  *
- * @author <a href="mailto:kris.bravo@corridor-software.us">Kris Bravo</a>
+ * @author <a href="mailto:m2@corridor-software.us">Kris Bravo</a>
  * @version $Id$
  */
 public abstract class CodedException
@@ -59,7 +59,7 @@ public abstract class CodedException
     }
 
     /**
-     * A part specific exception with a specific error code.
+     * An exception with a specific error code.
      * @param code The code key used to look up the error text.
      */
     public CodedException(final Error code)
@@ -69,7 +69,7 @@ public abstract class CodedException
     }
 
     /**
-     * A part specific exception with an error code and fields in the
+     * An exception with an error code and fields in the
      * message.
      *
      * @param code The code key used to look up the error text.
@@ -82,7 +82,7 @@ public abstract class CodedException
     }
 
     /**
-     * A part specific exception with an error code and fields in the
+     * An exception with an error code and fields in the
      * message.
      *
      * @param code The code key used to look up the error text.
@@ -97,7 +97,7 @@ public abstract class CodedException
     }
 
     /**
-     * Creates a new Coded CAM Exception, given an error code and root cause.
+     * Creates a new Coded Exception, given an error code and root cause.
      *
      * @param code The Error of this particular exception.
      * @param exception The root cause of the problem.

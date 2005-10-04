@@ -14,8 +14,9 @@
          <item name="Mojo" href="http://mojo.codehaus.org"/>
          <item name="Maven" href="http://maven.apache.org/maven2"/>
       </links>
-      <menu name="Mojo">
-         <item name="mojo" href="http://mojo.codehaus.org"/>
+      <menu name="XDoclet plugin">
+        <item name="Introduction" href="overview.html"/>
+        <item name="Usage" href="usage.html"/>
       </menu>
       ${reports}
    </body>
