@@ -14,7 +14,7 @@
          <item name="Mojo" href="http://mojo.codehaus.org"/>
          <item name="Maven" href="http://maven.apache.org/maven2"/>
       </links>
-      <menu name="XDoclet plugin">
+      <menu name="XMLBeans plugin">
         <item name="Introduction" href="overview.html"/>
         <item name="Usage" href="usage.html"/>
       </menu>
