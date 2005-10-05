@@ -1,41 +1,25 @@
-<?xml version="1.0"?>
-
 <project>
-  <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.codehaus.mojo</groupId>
     <artifactId>mojo</artifactId>
+    <groupId>org.codehaus.mojo</groupId>
     <version>4</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>xmlbeans-maven-plugin</artifactId>
-  <version>2.0-beta-1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Maven XML Beans Plugin</name>
-  
+  <version>2.0-beta-1</version>
   <url>http://mojo.codehaus.org/xmlbeans-maven-plugin/</url>
-  
-  <scm>
-    <connection>scm:svn:svn://svn.codehaus.org/mojo/trunk/mojo</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo</developerConnection>
-    <url>https://svn.codehaus.org/mojo/trunk/mojo/xmlbeans-maven-plugin</url>
-  </scm>
-
   <ciManagement>
     <system>continuum</system>
     <notifiers>
       <notifier>
-        <type>mail</type>
         <configuration>
           <address>dev@mojo.codehaus.org</address>
         </configuration>
       </notifier>
     </notifiers>
   </ciManagement>
-
-  <prerequisites>
-    <maven>2.0-beta-1</maven>
-  </prerequisites>
-
   <developers>
     <developer>
       <id>kbravo</id>
@@ -46,7 +30,6 @@
       <timezone>EST</timezone>
     </developer>
   </developers>
-  
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -54,32 +37,12 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
-  <reporting>
-    <plugins>
-<!--      
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>changes-maven-plugin</artifactId>
-        <version>2.0-beta-1</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>changes-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
--->
-    </plugins>
-  </reporting>
-
+  <scm>
+    <connection>scm:svn:svn://svn.codehaus.org/mojo/tags/xmlbeans-maven-plugin-2.0-beta-1/mojo</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/tags/xmlbeans-maven-plugin-2.0-beta-1/mojo</developerConnection>
+    <url>https://svn.codehaus.org/mojo/tags/xmlbeans-maven-plugin-2.0-beta-1/mojo/xmlbeans-maven-plugin</url>
+  </scm>
   <dependencies>
-    <dependency>
-      <groupId>plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.0-alpha-3</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
@@ -91,16 +54,15 @@
       <version>2.0-beta-1</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact-manager</artifactId>
-      <version>2.0-beta-1</version>
-      <scope>test</scope>
+      <groupId>xmlbeans</groupId>
+      <artifactId>xbean</artifactId>
+      <version>2.0.0</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-7</version>
-      <scope>test</scope>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.0-alpha-3</version>
     </dependency>
     <dependency>
       <groupId>xml-resolver</groupId>
@@ -109,10 +71,10 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>xmlbeans</groupId>
-      <artifactId>xbean</artifactId>
-      <version>2.0.0</version>
-      <scope>compile</scope>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact-manager</artifactId>
+      <version>2.0-beta-1</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>stax</groupId>
@@ -126,5 +88,12 @@
       <version>1.0</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <version>1.0-alpha-7</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+  <reporting />
 </project>
