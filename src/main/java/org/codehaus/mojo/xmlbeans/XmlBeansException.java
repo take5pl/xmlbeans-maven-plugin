@@ -58,6 +58,8 @@ public class XmlBeansException
     * The handle to the resource bundle containing the errors. 
     */
    private static final ResourceBundle errorTable = ResourceBundle.getBundle(XmlBeansException.class.getName());
+
+   public static final Error STALE_FILE_TOUCH = new Error("file.stale.io");
    
    /**
     * A part specific exception with a specific error code.

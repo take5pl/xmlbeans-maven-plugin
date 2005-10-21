@@ -18,6 +18,7 @@ package org.codehaus.mojo.xmlbeans;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Collection;
@@ -103,18 +104,24 @@ public class XmlBeansPlugin
     *
     * @parameter expression="${project.build.outputDirectory}"
     * @required
-    * @readonly
     */
    private File classGenerationDirectory;
 
    /**
     * Set a location to generate JAVA files into.
     *
-    * @parameter expression="${project.build.directory}/generated-source"
+    * @parameter expression="${project.build.directory}/xmlbeans-source"
     * @required
-    * @readonly
     */
    private File sourceGenerationDirectory;
+   
+   /**
+    * The location of the flag file used to determine if the output is stale.
+    *
+    * @parameter expression="${project.build.directory}/xmlbeans-source/.staleFlag"
+    * @required
+    */
+   private File staleFile;
 
    /**
     * Indicates whether source should be compiled with debug information;
@@ -257,13 +264,21 @@ public class XmlBeansPlugin
     */
    private EntityResolver entityResolver;
 
-    private static final File[] EMPTY_FILE_ARRAY = new File[0];
-
+   /**
+    * 
+    */
+   private static final File[] EMPTY_FILE_ARRAY = new File[0];
+    
+   /**
+    * Files to parse and generate models for.
+    */
+   private File[] xsdFiles;
+   
     /**
-     * Empty constructor for the XML Beans plugin.
-     */
-    public XmlBeansPlugin() {
-    }
+    * Empty constructor for the XML Beans plugin.
+    */
+   public XmlBeansPlugin() {
+   }
 
    /**
     * <p>Map the parameters to the schema compilers parameter object, make
@@ -277,39 +292,88 @@ public class XmlBeansPlugin
       throws org.apache.maven.plugin.MojoExecutionException
    {
 
-      try
-      {
-         SchemaCompiler.Parameters compilerParams = ParameterAdapter.getCompilerParameters(this);
+	   if (isOutputStale()) 
+	   {
+	      try
+	      {
+	         SchemaCompiler.Parameters compilerParams = ParameterAdapter.getCompilerParameters(this);
+	
+	         compilerParams.getSrcDir().mkdirs();
+	
+	         boolean result = SchemaCompiler.compile(compilerParams);
+	
+	         if (!result)
+	         {
+	            StringBuffer errors = new StringBuffer();
+	            for (Iterator iterator = compilerParams.getErrorListener().iterator(); iterator.hasNext();)
+	            {
+	               Object o = (Object) iterator.next();
+	               errors.append("xml Error" + o);
+	               errors.append("\n");
+	            }
+	            throw new XmlBeansException(XmlBeansException.COMPILE_ERRORS, errors.toString());
+	         }
+	         else
+	         {
+	            project.addCompileSourceRoot(compilerParams.getSrcDir().getAbsolutePath());
+	            project.getCompileClasspathElements().add(compilerParams.getClassesDir());
+	         }
+	
+	         touchStaleFile();
+	      }
+	      catch (DependencyResolutionRequiredException drre)
+	      {
+	         throw new XmlBeansException(XmlBeansException.CLASSPATH_DEPENDENCY, drre);
+	      }
+	      catch (IOException ioe) {
+	    	  throw new XmlBeansException(XmlBeansException.STALE_FILE_TOUCH, staleFile.getAbsolutePath(), ioe);
+	      }
+	      
+	   } 
+	   else 
+	   {
+	      getLog().info("Nothing to generate - all schema objects are up to date.");
+	   }
+   }
 
-         compilerParams.getSrcDir().mkdirs();
-
-         boolean result = SchemaCompiler.compile(compilerParams);
-
-         if (!result)
-         {
-            StringBuffer errors = new StringBuffer();
-            for (Iterator iterator = compilerParams.getErrorListener().iterator(); iterator.hasNext();)
-            {
-               Object o = (Object) iterator.next();
-               errors.append("xml Error" + o);
-               errors.append("\n");
-            }
-            throw new XmlBeansException(XmlBeansException.COMPILE_ERRORS, errors.toString());
-         }
-         else
-         {
-            project.addCompileSourceRoot(compilerParams.getSrcDir().getAbsolutePath());
-            project.getCompileClasspathElements().add(compilerParams.getClassesDir());
-         }
-
-      }
-      catch (DependencyResolutionRequiredException drre)
-      {
-         throw new XmlBeansException(XmlBeansException.CLASSPATH_DEPENDENCY, drre);
-      }
+   private void touchStaleFile() throws IOException {
+	   if (!staleFile.exists()) {
+		   staleFile.getParentFile().mkdirs();
+		   staleFile.createNewFile();
+		   getLog().debug("Stale flag file created.");
+	   } else {
+		   staleFile.setLastModified(System.currentTimeMillis());
+	   }
    }
 
    /**
+    * Returns true of any one of the files in the XSD array are more new than the 
+    * <code>staleFlag</code> file.
+    * 
+    * @return True if xsd files have been modified since the last build.
+    */
+   private boolean isOutputStale() {
+	   File [] sourceXsds = getXsdFiles();
+	   boolean stale = !staleFile.exists();
+	   
+       if (!stale)  
+	   {
+		   getLog().debug("Stale flag file exists, comparing to xsd's.");
+		   long staleMod = staleFile.lastModified();
+		   
+		   for (int i = 0; i < sourceXsds.length; i++) {
+			   if( sourceXsds[i].lastModified() > staleMod)
+			   {
+				   getLog().debug(sourceXsds[i].getName() + " is newer than the stale flag file.");
+				   stale = true;
+			   }
+		   }
+	   }
+	   
+	   return stale;
+   }
+
+/**
     * Check the required parameters for values. Report an error if something
     * isn't quite right.
     *
@@ -620,25 +684,29 @@ public class XmlBeansPlugin
     */
    public final File[] getXsdFiles()
    {
-      List schemas = new ArrayList();
-      if (sourceSchemas != null)
-      {
-         for (StringTokenizer st = new StringTokenizer(sourceSchemas, ","); st.hasMoreTokens();)
-         {
-            String schemaName = st.nextToken();
-            schemas.add(new File(schemaDirectory, schemaName));
-         }
-      }
-      else
-      {
-         File[] files = schemaDirectory.listFiles(new XSDFile());
-         File nextFile = null;
-         for (int i = 0; i < files.length; i++)
-         {
-            schemas.add(files[i]);
-         }
-      }
-      return (File[]) schemas.toArray(new File[] {});
+	   if (xsdFiles == null) {
+	      List schemas = new ArrayList();
+	      if (sourceSchemas != null)
+	      {
+	         for (StringTokenizer st = new StringTokenizer(sourceSchemas, ","); st.hasMoreTokens();)
+	         {
+	            String schemaName = st.nextToken();
+	            schemas.add(new File(schemaDirectory, schemaName));
+	         }
+	      }
+	      else
+	      {
+	         File[] files = schemaDirectory.listFiles(new XSDFile());
+	         File nextFile = null;
+	         for (int i = 0; i < files.length; i++)
+	         {
+	            schemas.add(files[i]);
+	         }
+	      }
+	      xsdFiles = (File[]) schemas.toArray(new File[] {}); 
+	   }
+	   
+      return xsdFiles;
    }
 
    /**

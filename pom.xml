@@ -20,6 +20,19 @@
     <url>https://svn.codehaus.org/mojo/trunk/mojo/xmlbeans-maven-plugin</url>
   </scm>
 
+  <distributionManagement>
+    <site>
+      <id>mojo.website</id>
+      <name>Mojo Website</name>
+      <url>scp://beaver.codehaus.org/home/projects/mojo/public_html/xmlbeans-maven-plugin</url>
+    </site>
+    <repository>
+      <id>repo1</id>
+      <name>Maven Central Repository</name>
+      <url>scp://repo1.maven.org/home/projects/maven/repository-staging/to-ibiblio/maven2/plugins</url>
+    </repository>
+  </distributionManagement>
+
   <ciManagement>
     <system>continuum</system>
     <notifiers>
@@ -73,7 +86,7 @@
 -->
     </plugins>
   </reporting>
-
+  
   <dependencies>
     <dependency>
       <groupId>plexus</groupId>
