@@ -54,33 +54,38 @@ import org.xml.sax.EntityResolver;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:kris.bravo@corridor-software.us">Kris Bravo</a>
  * @version $Id$
- * @goal xmlbeans
- * @phase generate-sources
- * @requiresDependencyResolution compile
- * @description Creates java beans which map to XML schemas.
  *
  */
-public class XmlBeansPlugin
+public abstract class AbstractXmlBeansPlugin
    extends AbstractMojo
    implements PluginProperties
 {
 
    /**
-    * A file that points to either an individual schema file or a directory of files.
-    * Not a path reference.  If multiple schema files need to be built together,
-    * use a nested fileset instead of setting schema.
-    *
-    * @parameter
+    * The directory where .xsd files are to be found.
     */
-   private String sourceSchemas;
+//   protected File schemaDirectory;
 
    /**
-    * The directory where .xsd files are to be found.
-    *
-    * @parameter default-value="${basedir}/src/xsd"
-    * @required
+    * Set a location to generate CLASS files into.
     */
-   private File schemaDirectory;
+//   private File classGenerationDirectory;
+
+   /**
+    * Set a location to generate JAVA files into.
+    */
+//   private File sourceGenerationDirectory;
+   
+   /**
+    * The location of the flag file used to determine if the output is stale.
+    */
+//  private File staleFile;
+
+   /**
+    * Default xmlConfigs directory. If no xmlConfigs list is specified, this
+    * one is checked automatically.
+    */
+//   private File defaultXmlConfigDir;
 
    /**
     * Define the name of the jar file created.  For instance, "myXMLBean.jar"
@@ -98,30 +103,6 @@ public class XmlBeansPlugin
     * @parameter default-value="false"
     */
    private boolean download;
-
-   /**
-    * Set a location to generate CLASS files into.
-    *
-    * @parameter expression="${project.build.outputDirectory}"
-    * @required
-    */
-   private File classGenerationDirectory;
-
-   /**
-    * Set a location to generate JAVA files into.
-    *
-    * @parameter expression="${project.build.directory}/xmlbeans-source"
-    * @required
-    */
-   private File sourceGenerationDirectory;
-   
-   /**
-    * The location of the flag file used to determine if the output is stale.
-    *
-    * @parameter expression="${project.build.directory}/xmlbeans-source/.staleFlag"
-    * @required
-    */
-   private File staleFile;
 
    /**
     * Indicates whether source should be compiled with debug information;
@@ -204,27 +185,28 @@ public class XmlBeansPlugin
    private boolean noJavac;
 
    /**
+    * Todo: Unknown use.
+    *
+    * @parameter
+    */
+   private String catalogLocation;
+
+   /**
+    * A file that points to either an individual schema file or a directory of files.
+    * Not a path reference.  If multiple schema files need to be built together,
+    * use a nested fileset instead of setting schema.
+    *
+    * @parameter
+    */
+   private String sourceSchemas;
+
+   /**
     * Configuration files used by the object generator. For more information
     * about the format of these files, see Todo.
     *
     * @parameter
     */
    private List xmlConfigs;
-
-   /**
-    * Default xmlConfigs directory. If no xmlConfigs list is specified, this
-    * one is checked automatically.
-    *
-    * @parameter expression="${basedir}/src/xsdconfig"
-    */
-   private File defaultXmlConfigDir;
-
-   /**
-    * Todo: Unknown use.
-    *
-    * @parameter
-    */
-   private String catalogLocation;
 
    /**
     * @parameter expression="${plugin.artifacts}"
@@ -277,7 +259,7 @@ public class XmlBeansPlugin
     /**
     * Empty constructor for the XML Beans plugin.
     */
-   public XmlBeansPlugin() {
+   public AbstractXmlBeansPlugin() {
    }
 
    /**
@@ -315,8 +297,7 @@ public class XmlBeansPlugin
 	         }
 	         else
 	         {
-	            project.addCompileSourceRoot(compilerParams.getSrcDir().getAbsolutePath());
-	            project.getCompileClasspathElements().add(compilerParams.getClassesDir());
+	        	 updateProject(project, compilerParams);
 	         }
 	
 	         touchStaleFile();
@@ -326,7 +307,7 @@ public class XmlBeansPlugin
 	         throw new XmlBeansException(XmlBeansException.CLASSPATH_DEPENDENCY, drre);
 	      }
 	      catch (IOException ioe) {
-	    	  throw new XmlBeansException(XmlBeansException.STALE_FILE_TOUCH, staleFile.getAbsolutePath(), ioe);
+	    	  throw new XmlBeansException(XmlBeansException.STALE_FILE_TOUCH, getStaleFile().getAbsolutePath(), ioe);
 	      }
 	      
 	   } 
@@ -335,8 +316,13 @@ public class XmlBeansPlugin
 	      getLog().info("Nothing to generate - all schema objects are up to date.");
 	   }
    }
+   
+   protected abstract void updateProject(MavenProject project, SchemaCompiler.Parameters compilerParams) 
+   throws DependencyResolutionRequiredException;
 
    private void touchStaleFile() throws IOException {
+	   File staleFile = getStaleFile();
+	   
 	   if (!staleFile.exists()) {
 		   staleFile.getParentFile().mkdirs();
 		   staleFile.createNewFile();
@@ -354,6 +340,7 @@ public class XmlBeansPlugin
     */
    private boolean isOutputStale() {
 	   File [] sourceXsds = getXsdFiles();
+	   File staleFile = getStaleFile();
 	   boolean stale = !staleFile.exists();
 	   
        if (!stale)  
@@ -373,29 +360,6 @@ public class XmlBeansPlugin
 	   return stale;
    }
 
-/**
-    * Check the required parameters for values. Report an error if something
-    * isn't quite right.
-    *
-    * @throws MojoExecutionException Validation failed.
-    */
-   private void validateParameters()
-      throws org.apache.maven.plugin.MojoExecutionException
-   {
-      StringBuffer errors = new StringBuffer();
-
-      // directory with schemas
-      if (schemaDirectory == null)
-      {
-         throw new XmlBeansException(XmlBeansException.MISSING_SCHEMA_DIRECTORY);
-      }
-
-      if (errors.length() > 0)
-      {
-         throw new XmlBeansException(XmlBeansException.UNSET_PROPERTIES, errors.toString());
-      }
-   }
-
    /**
     * Gives the plugin a reference to the local repository.
     *
@@ -406,17 +370,20 @@ public class XmlBeansPlugin
       localRepository = repository;
    }
 
+   public abstract File getBaseDir();
+   
+   public abstract File getStaleFile();
+   
+   public abstract File getDefaultXmlConfigDir();
+   
    /**
     * Returns the directory where the schemas are located. Note that this is
     * the base directory of the schema compiler, not the maven project.
     *
     * @return The schema directory.
     */
-   public final File getBaseDir()
-   {
-      return schemaDirectory;
-   }
-
+   public abstract File getSchemaDirectory();
+   
    /**
     * Returns a classpath for the compiler made up of artifacts from the project.
     *
@@ -475,6 +442,7 @@ public class XmlBeansPlugin
     */
    public final File[] getConfigFiles() throws XmlBeansException
    {
+	   File defaultXmlConfigDir = getDefaultXmlConfigDir();
 	   getLog().debug("Creating a list of config files.");
 	   try {
 		   if ( xmlConfigs != null) {
@@ -578,26 +546,6 @@ public class XmlBeansPlugin
    }
 
    /**
-    * Returns the class directory of the project.
-    *
-    * @return The project build classes directory.
-    */
-   public final File getGeneratedClassesDirectory()
-   {
-      return classGenerationDirectory;
-   }
-
-   /**
-    * Returns the directory for saving generated source files.
-    *
-    * @return The generated=sources directory.
-    */
-   public final File getGeneratedSourceDirectory()
-   {
-      return sourceGenerationDirectory;
-   }
-
-   /**
     * An array of other source files. Currently an empty array.
     *
     * @return An empty file array.
@@ -684,6 +632,8 @@ public class XmlBeansPlugin
     */
    public final File[] getXsdFiles()
    {
+	   File schemaDirectory = getSchemaDirectory();
+	   
 	   if (xsdFiles == null) {
 	      List schemas = new ArrayList();
 	      if (sourceSchemas != null)
@@ -697,7 +647,6 @@ public class XmlBeansPlugin
 	      else
 	      {
 	         File[] files = schemaDirectory.listFiles(new XSDFile());
-	         File nextFile = null;
 	         for (int i = 0; i < files.length; i++)
 	         {
 	            schemas.add(files[i]);

@@ -1,10 +1,10 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>xmlbeans-mojo-54</artifactId>
+  <artifactId>xmlbeans-mojo-69</artifactId>
   <groupId>org.codehaus.mojo</groupId>
   <version>1.0</version>
   <packaging>jar</packaging>
-  <name>Test Case for MOJO-54</name>
+  <name>Test Case for MOJO-69</name>
   <build>
     <plugins>
       <plugin>
@@ -14,16 +14,11 @@
            <execution>
               <goals>
                  <goal>xmlbeans</goal>
+                 <goal>xmlbeans-test</goal>
               </goals>
            </execution>
         </executions>
         <inherited>true</inherited>
-        <configuration>
-           <xmlConfigs>
-              <xmlConfig implementation="java.io.File">src/main/xsdconfig</xmlConfig>
-              <xmlConfig implementation="java.io.File">src/main/xsdconfig2/explicit.xsdconfig</xmlConfig>
-           </xmlConfigs>
-        </configuration>
       </plugin>
     </plugins>
   </build>

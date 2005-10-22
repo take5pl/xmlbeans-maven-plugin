@@ -17,7 +17,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>maven-xmlbeans-plugin</artifactId>
-        <version>2.0-beta-1</version>
         <executions>
            <execution>
               <goals>
@@ -27,15 +26,15 @@
         </executions>
         <inherited>true</inherited>
         <configuration>
-           <schemaDirectory>src/xsd</schemaDirectory>
+           <schemaDirectory>src/main/xsd</schemaDirectory>
         </configuration>
       </plugin>
 ]]>
         </source>
       </p>
       
-      <p>By default, the plugin looks for the src/xsd directory to exist, so it isn't necessary to specify it. Nor
-      do you need to specify src/xsdconfig, the assumed location of any xsd config files to use during the parsing and
+      <p>By default, the plugin looks for the src/main/xsd directory to exist, so it isn't necessary to specify it. Nor
+      do you need to specify src/main/xsdconfig, the assumed location of any xsd config files to use during the parsing and
       creation of the object model. However, you can add additional xsdconfig directories as shown below.
 
         <source>
@@ -54,8 +53,8 @@
         <inherited>true</inherited>
         <configuration>
            <xmlConfigs>
-              <xmlConfig implementation="java.io.File">src/xsdconfig</xmlConfig>
-              <xmlConfig implementation="java.io.File">src/xsdconfig2/explicit.xsdconfig</xmlConfig>
+              <xmlConfig implementation="java.io.File">src/main/xsdconfig</xmlConfig>
+              <xmlConfig implementation="java.io.File">src/main/xsdconfig2/explicit.xsdconfig</xmlConfig>
            </xmlConfigs>
         </configuration>
       </plugin>
@@ -63,8 +62,31 @@
         </source>
       </p>
 
+      <p>XML Beans models may be generated for the test compile as well. Although the schemaDirectory is 
+      defined in the example below, the default xsd directory for the test cycle is in fact src/test/xsd.
+        <source>
+<![CDATA[
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>maven-xmlbeans-plugin</artifactId>
+        <executions>
+           <execution>
+              <goals>
+                 <goal>xmlbeans-test</goal>
+              </goals>
+           </execution>
+        </executions>
+        <inherited>true</inherited>
+        <configuration>
+           <schemaDirectory>src/test/xsd</schemaDirectory>
+        </configuration>
+      </plugin>
+]]>
+        </source>
+      </p>
+      
       <p>
-        The goal to be called is <code>xmlbeans:xmlbeans</code>.
+        The goals available are are <code>xmlbeans:xmlbeans</code> and <code>xmlbeans:xmlbeans-test</code>.
       </p>
     </section>
 
