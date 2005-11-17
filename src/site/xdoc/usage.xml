@@ -86,6 +86,36 @@
       </p>
       
       <p>
+        Schemas located within an artifact jar your project is dependent upon can be used as
+        source schemas. In the example below the geronimo-tomcat jar is expected to be a listed
+        depedency of the project. Any schemas ending with .xsd or .XSD will be extracted from the
+        artifact and an object model of these schemas will be produced. Also in the example, the
+        memory max of the schema compiler is set - this may be needed for large schema sets.
+        <source>
+<![CDATA[
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xmlbeans-maven-plugin</artifactId>
+        <executions>
+           <execution>
+              <goals>
+                 <goal>xmlbeans</goal>
+              </goals>
+           </execution>
+        </executions>
+        <configuration>
+           <memoryInitialSize>50m</memoryInitialSize>
+           <memoryMaximumSize>80m</memoryMaximumSize>
+           <xsdJars>
+              <xsdJar implementation="java.lang.String">geronimo:geronimo-tomcat</xsdJar>
+           </xsdJars>
+        </configuration>
+      </plugin>
+]]>
+        </source>
+      </p>
+      
+      <p>
         The goals available are are <code>xmlbeans:xmlbeans</code> and <code>xmlbeans:xmlbeans-test</code>.
       </p>
     </section>

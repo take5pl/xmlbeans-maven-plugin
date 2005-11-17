@@ -48,7 +48,7 @@ interface PluginProperties
     *
     * @return An array of schema files to be parsed by the schema compiler.
     */
-   File[] getXsdFiles();
+   File[] getXsdFiles() throws XmlBeansException;
 
    /**
     * Returns the directory where the schemas are located. Note that this is

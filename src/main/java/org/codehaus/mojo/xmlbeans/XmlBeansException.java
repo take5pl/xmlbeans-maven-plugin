@@ -34,6 +34,10 @@ import org.codehaus.mojo.exception.Error;
 public class XmlBeansException
    extends CodedException
 {
+   /**
+    * 
+    */
+   private static final long serialVersionUID = -7072954264233215003L;
 
    /** The publisher specified in the configuration isn't valid. */
    public static final Error REQ_FILE_MISSING = new Error("file.requirements.missing");
@@ -53,14 +57,20 @@ public class XmlBeansException
    public static final Error MISSING_FILE = new Error("file.missing");
    
    public static final Error INVALID_CONFIG_FILE = new Error("file.config.missing");
+   
+   public static final Error XSD_ARTIFACT_JAR = new Error("xsd.artifact.missing");
+   
+   public static final Error ARTIFACT_FILE_PATH = new Error("xsd.artifact.file.missing");
 
+   public static final Error INVALID_ARTIFACT_REFERENCE = new Error("artifact.path.invalid");
+   
    /**
     * The handle to the resource bundle containing the errors. 
     */
    private static final ResourceBundle errorTable = ResourceBundle.getBundle(XmlBeansException.class.getName());
 
    public static final Error STALE_FILE_TOUCH = new Error("file.stale.io");
-   
+
    /**
     * A part specific exception with a specific error code.
     *

@@ -177,7 +177,7 @@ public abstract class CodedException
             }
             catch (MissingResourceException e)
             {
-                message = errors.getString(MISSING_ERROR_KEY.getErrorKey());
+                message = errors.getString(MISSING_ERROR_KEY.getErrorKey() + ":" + e.getKey());
             }
 
         }

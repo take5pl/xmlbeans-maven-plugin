@@ -60,33 +60,7 @@ public abstract class AbstractXmlBeansPlugin
    extends AbstractMojo
    implements PluginProperties
 {
-
-   /**
-    * The directory where .xsd files are to be found.
-    */
-//   protected File schemaDirectory;
-
-   /**
-    * Set a location to generate CLASS files into.
-    */
-//   private File classGenerationDirectory;
-
-   /**
-    * Set a location to generate JAVA files into.
-    */
-//   private File sourceGenerationDirectory;
-   
-   /**
-    * The location of the flag file used to determine if the output is stale.
-    */
-//  private File staleFile;
-
-   /**
-    * Default xmlConfigs directory. If no xmlConfigs list is specified, this
-    * one is checked automatically.
-    */
-//   private File defaultXmlConfigDir;
-
+	
    /**
     * Define the name of the jar file created.  For instance, "myXMLBean.jar"
     * will output the results of this task into a jar with the same name.
@@ -154,7 +128,7 @@ public abstract class AbstractXmlBeansPlugin
     *
     * @parameter default-value="true"
     */
-   private boolean quiet;
+   private boolean quiet = true;
 
    /**
     * Do not enforce the unique particle attribution rule.
@@ -207,7 +181,7 @@ public abstract class AbstractXmlBeansPlugin
     * @parameter
     */
    private List xmlConfigs;
-
+   
    /**
     * @parameter expression="${plugin.artifacts}"
     * @required
@@ -237,14 +211,14 @@ public abstract class AbstractXmlBeansPlugin
     * @required
     * @readonly
     */
-   private MavenProject project;
+   protected MavenProject project;
 
    /**
     * Used to find resources used by the XML compiler. Currently not passed
     * to the compiler, since everything is on the classpath.
     *
     */
-   private EntityResolver entityResolver;
+   private EntityResolver entityResolver = null;
 
    /**
     * 
@@ -274,7 +248,7 @@ public abstract class AbstractXmlBeansPlugin
       throws org.apache.maven.plugin.MojoExecutionException
    {
 
-	   if (isOutputStale()) 
+	   if (hasSchemas() && isOutputStale()) 
 	   {
 	      try
 	      {
@@ -313,21 +287,38 @@ public abstract class AbstractXmlBeansPlugin
 	   } 
 	   else 
 	   {
-	      getLog().info("Nothing to generate - all schema objects are up to date.");
+	      getLog().info("Either nothing to generate or all schema objects are up to date.");
 	   }
+   }
+   
+   /**
+    * Indicates whether or not there are schemas to compile.
+    * 
+    * @return true if there are schema files in the source or artifacts.
+    * @throws XmlBeansException
+    */
+   private boolean hasSchemas() throws XmlBeansException {
+	   return getXsdFiles().length > 0;
    }
    
    protected abstract void updateProject(MavenProject project, SchemaCompiler.Parameters compilerParams) 
    throws DependencyResolutionRequiredException;
+   
+   protected abstract List getXsdJars();
+   
+   protected abstract File getGeneratedSchemaDirectory();
 
    private void touchStaleFile() throws IOException {
 	   File staleFile = getStaleFile();
 	   
-	   if (!staleFile.exists()) {
+	   if (!staleFile.exists()) 
+	   {
 		   staleFile.getParentFile().mkdirs();
 		   staleFile.createNewFile();
 		   getLog().debug("Stale flag file created.");
-	   } else {
+	   }
+	   else 
+	   {
 		   staleFile.setLastModified(System.currentTimeMillis());
 	   }
    }
@@ -338,7 +329,7 @@ public abstract class AbstractXmlBeansPlugin
     * 
     * @return True if xsd files have been modified since the last build.
     */
-   private boolean isOutputStale() {
+   private boolean isOutputStale() throws XmlBeansException {
 	   File [] sourceXsds = getXsdFiles();
 	   File staleFile = getStaleFile();
 	   boolean stale = !staleFile.exists();
@@ -348,7 +339,8 @@ public abstract class AbstractXmlBeansPlugin
 		   getLog().debug("Stale flag file exists, comparing to xsd's.");
 		   long staleMod = staleFile.lastModified();
 		   
-		   for (int i = 0; i < sourceXsds.length; i++) {
+		   for (int i = 0; i < sourceXsds.length; i++) 
+		   {
 			   if( sourceXsds[i].lastModified() > staleMod)
 			   {
 				   getLog().debug(sourceXsds[i].getName() + " is newer than the stale flag file.");
@@ -356,7 +348,6 @@ public abstract class AbstractXmlBeansPlugin
 			   }
 		   }
 	   }
-	   
 	   return stale;
    }
 
@@ -404,17 +395,19 @@ public abstract class AbstractXmlBeansPlugin
        // TODO: use addArtifacts
        Set set = new HashSet( project.getDependencyArtifacts() );
 
-       for ( Iterator i = pluginArtifacts.iterator(); i.hasNext(); )
-       {
-           Artifact a = (Artifact) i.next();
-           if ( a.getFile() != null )
-           {
-               results.add( a.getFile() );
-
-               a = factory.createArtifact( a.getGroupId(), a.getArtifactId(), a.getVersion(), Artifact.SCOPE_COMPILE,
-                                           a.getType() );
-               set.add( a );
-           }
+       if (pluginArtifacts != null) {
+	       for ( Iterator i = pluginArtifacts.iterator(); i.hasNext(); )
+	       {
+	           Artifact a = (Artifact) i.next();
+	           if ( a.getFile() != null )
+	           {
+	               results.add( a.getFile() );
+	
+	               a = factory.createArtifact( a.getGroupId(), a.getArtifactId(), a.getVersion(), Artifact.SCOPE_COMPILE,
+	                                           a.getType() );
+	               set.add( a );
+	           }
+	       }
        }
 
        project.setDependencyArtifacts( set );
@@ -430,7 +423,7 @@ public abstract class AbstractXmlBeansPlugin
     */
    public final String getCompiler()
    {
-      return null;
+	   return compiler;
    }
 
    /**
@@ -445,16 +438,23 @@ public abstract class AbstractXmlBeansPlugin
 	   File defaultXmlConfigDir = getDefaultXmlConfigDir();
 	   getLog().debug("Creating a list of config files.");
 	   try {
-		   if ( xmlConfigs != null) {
+		   if ( xmlConfigs != null) 
+		   {
 			   return (File[])getFileList(xmlConfigs).toArray(new File[] {});
-		   } else if (defaultXmlConfigDir.exists()){
+		   }
+		   else if (defaultXmlConfigDir.exists())
+		   {
 			   List defaultDir = new ArrayList();
 			   defaultDir.add(defaultXmlConfigDir);
 			   return (File[])getFileList(defaultDir).toArray(new File[] {});
-		   } else {
+		   }
+		   else 
+		   {
 			   return null;
 		   }
-	   } catch (XmlBeansException xmlbe) {
+	   }
+	   catch (XmlBeansException xmlbe) 
+	   {
 		   throw new XmlBeansException(XmlBeansException.INVALID_CONFIG_FILE, xmlbe);
 	   }
    }
@@ -479,9 +479,11 @@ public abstract class AbstractXmlBeansPlugin
          for (Iterator i = fileList.iterator(); i.hasNext(); )
          {
         	 nextFile = (File)i.next();
-        	 if (nextFile.exists()) {
+        	 if (nextFile.exists()) 
+        	 {
         		 // scrub for "hidden" files beginning with '.'
-        		 if (nextFile.getName().indexOf('.') != 0) {
+        		 if (nextFile.getName().indexOf('.') != 0) 
+        		 {
 		        	 if (nextFile.isDirectory())
 		        	 {
 		                 getLog().debug("One entry was a directory. Getting its children too.");
@@ -545,6 +547,15 @@ public abstract class AbstractXmlBeansPlugin
       return null;
    }
 
+   /**
+    * Used during testing.
+    * 
+    * @param project
+    */
+   final void setProject(MavenProject newProject) {
+	  project = newProject; 
+   }
+   
    /**
     * An array of other source files. Currently an empty array.
     *
@@ -626,16 +637,21 @@ public abstract class AbstractXmlBeansPlugin
    }
 
    /**
-    * Returns a file array of xsd files to translate to object models.
+    * Returns a file array of xsd files to translate to object models. 
     *
     * @return An array of schema files to be parsed by the schema compiler.
     */
-   public final File[] getXsdFiles()
+   public final File[] getXsdFiles() throws XmlBeansException
    {
-	   File schemaDirectory = getSchemaDirectory();
 	   
-	   if (xsdFiles == null) {
-	      List schemas = new ArrayList();
+	   if (xsdFiles == null) 
+	   {
+		  File schemaDirectory = getSchemaDirectory();
+
+		  // take care of artifacts first.
+	      List schemas = getArtifactSchemas();
+
+	      // take care of the schema directory next.
 	      if (sourceSchemas != null)
 	      {
 	         for (StringTokenizer st = new StringTokenizer(sourceSchemas, ","); st.hasMoreTokens();)
@@ -646,16 +662,54 @@ public abstract class AbstractXmlBeansPlugin
 	      }
 	      else
 	      {
+	    	  getLog().debug("The schema Directory is " + schemaDirectory);
 	         File[] files = schemaDirectory.listFiles(new XSDFile());
-	         for (int i = 0; i < files.length; i++)
+	         if (files != null) 
 	         {
-	            schemas.add(files[i]);
+		         for (int i = 0; i < files.length; i++)
+		         {
+		            schemas.add(files[i]);
+		         }
 	         }
 	      }
-	      xsdFiles = (File[]) schemas.toArray(new File[] {}); 
+	      
+	      xsdFiles = (File[]) schemas.toArray(new File[] {});
 	   }
 	   
       return xsdFiles;
+   }
+   
+   /**
+    * Sweep through the jar artifacts which contain xsds and produce a
+    * list of paths to each xsd within the file. Leave it up to the
+    * entity resolver to pass the actual file to the compiler.
+    * 
+    * @return A list of path's to the XSD's in the artifact jars. This doesn't include the jar paths.
+    */
+   private List getArtifactSchemas() throws XmlBeansException 
+   {
+	   getLog().debug("Artifact count: " + project.getDependencyArtifacts().size());
+	   SchemaArtifactLookup lookup = new SchemaArtifactLookup(project.getDependencyArtifacts(), getLog());
+	   List artifactSchemas = new ArrayList();
+	   List xsdJars = getXsdJars();
+	   File prefix = getGeneratedSchemaDirectory();
+	   int count = xsdJars.size();
+
+	   // Collect the file paths to the actual jars
+	   Artifact nextArtifact = null;
+	   getLog().debug("looking for artifact schemas.");
+
+	   for (int i = 0; i < count; i++) 
+	   {
+		   if (getLog().isDebugEnabled()) 
+		   {
+			   getLog().debug("resolving " + xsdJars.get(i) + "into a file path.");
+		   }
+		   nextArtifact = lookup.find((String)xsdJars.get(i));
+		   artifactSchemas.addAll(SchemaArtifact.getFilePaths(nextArtifact, getLog(), prefix));
+	   }
+	   
+	   return artifactSchemas;
    }
 
    /**
@@ -737,7 +791,7 @@ public abstract class AbstractXmlBeansPlugin
    {
       return verbose;
    }
-
+   
    /**
     * No validation beyond those done by the maven plugin occur at this time.
     *
@@ -769,4 +823,9 @@ public abstract class AbstractXmlBeansPlugin
       }
 
    }
+
+	public void setPluginArtifacts(List pluginArtifacts) 
+	{
+		this.pluginArtifacts = pluginArtifacts;
+	}
 }

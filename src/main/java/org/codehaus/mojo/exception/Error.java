@@ -29,7 +29,12 @@ public class Error
    implements Serializable
 {
 
-    /** The error code's key. Used to look up the error text */
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2107339436186274590L;
+	
+	/** The error code's key. Used to look up the error text */
     private String errorKey;
 
     /**

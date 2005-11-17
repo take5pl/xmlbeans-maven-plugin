@@ -1,10 +1,10 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>xmlbeans-mojo-69</artifactId>
+  <artifactId>xmlbeans-mojo-89</artifactId>
   <groupId>org.codehaus.mojo</groupId>
   <version>1.0</version>
   <packaging>jar</packaging>
-  <name>Test Case for MOJO-69</name>
+  <name>Test Case for MOJO-89</name>
   <build>
     <plugins>
       <plugin>

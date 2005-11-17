@@ -17,6 +17,8 @@ package org.codehaus.mojo.xmlbeans;
  */
 
 import java.io.File;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.xmlbeans.impl.tool.SchemaCompiler;
 
@@ -58,6 +60,21 @@ public class CompileXmlBeansMojo
    protected File schemaDirectory;
 
    /**
+    * List of artifacts whose xsds need to be compiled.
+    * 
+    * @parameter
+    */
+   private List xsdJars;
+   
+   /**
+    * The directory where .xsd's pulled from xsdJars will be stored.
+    * 
+    * @parameter default-value="${project.build.directory}/xmlbeans-xsds"
+    * @parameter
+    */
+   private File generatedSchemaDirectory;
+
+  /**
     * Set a location to generate CLASS files into.
     *
     * @parameter expression="${project.build.outputDirectory}"
@@ -92,7 +109,8 @@ public class CompileXmlBeansMojo
     /**
     * Empty constructor for the XML Beans plugin.
     */
-   public CompileXmlBeansMojo() {
+   public CompileXmlBeansMojo() 
+   {
    }
 
    
@@ -111,7 +129,7 @@ public class CompileXmlBeansMojo
     */
    public File getBaseDir()
    {
-      return schemaDirectory;
+      return getSchemaDirectory();
    }
 
    /**
@@ -150,8 +168,28 @@ public class CompileXmlBeansMojo
     *
     * @return The schema directory.
     */
-   public File getSchemaDirectory() {
+   public File getSchemaDirectory() 
+   {
 	   return schemaDirectory;
    }
+
+
+   /**
+    * Returns the list of xsd jars.
+    */
+	protected List getXsdJars() 
+	{
+		if (xsdJars == null) 
+		{
+			xsdJars = new ArrayList();
+		}
+		return xsdJars;
+	}
+
+
+	protected File getGeneratedSchemaDirectory() 
+	{
+		return generatedSchemaDirectory;
+	}
    
 }
