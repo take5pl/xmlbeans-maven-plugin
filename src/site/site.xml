@@ -17,6 +17,7 @@
       <menu name="XMLBeans plugin">
         <item name="Introduction" href="overview.html"/>
         <item name="Usage" href="usage.html"/>
+        <item name="Changelog" href="changes.html"/>
       </menu>
       ${reports}
    </body>
