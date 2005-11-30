@@ -183,6 +183,15 @@ public abstract class AbstractXmlBeansPlugin
    private List xmlConfigs;
    
    /**
+    * Returns the javasource parameter which specifies an option to 
+    * the XmlBeans code generator.
+    *
+    * @parameter
+    * @return null.
+    */
+   private String javaSource;
+   
+   /**
     * @parameter expression="${plugin.artifacts}"
     * @required
     */
@@ -576,6 +585,15 @@ public abstract class AbstractXmlBeansPlugin
       return null;
    }
 
+   /**
+    * 
+    * 
+    * 
+    */
+   public final String getJavaSource() {
+	   return javaSource;
+   }
+   
    /**
     * Returns the initial size of the memory allocation for the schema compile process.
     *

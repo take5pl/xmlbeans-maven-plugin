@@ -71,6 +71,7 @@ public final class ParameterAdapter
       params.setRepackage(properties.getRepackage());
       params.setExtensions(properties.getExtensions());
       params.setMdefNamespaces(properties.getMdefNamespaces());
+      params.setJavaSource(properties.getJavaSource());
       return params;
    }
 }

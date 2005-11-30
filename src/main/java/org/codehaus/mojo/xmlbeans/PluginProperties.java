@@ -170,6 +170,14 @@ interface PluginProperties
     * @return null.
     */
    Set getMdefNamespaces();
+   
+   /**
+    * Returns the javasource parameter which specifies an option to 
+    * the XmlBeans code generator.
+    *
+    * @return null.
+    */
+   String getJavaSource();
 
    /**
     * Returns True if generated source files are not to be compiled.
