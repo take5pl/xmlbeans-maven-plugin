@@ -102,7 +102,13 @@
       <groupId>stax</groupId>
       <artifactId>stax</artifactId>
       <version>1.1.1-dev</version>
-      <scope>compile</scope>
+     <scope>compile</scope>
+     <exclusions>
+       <exclusion>
+         <artifactId>xmlbeans-jsr173-api</artifactId>
+         <groupId>xmlbeans</groupId>
+       </exclusion>
+     </exclusions>
     </dependency>
     <dependency>
       <groupId>stax</groupId>
