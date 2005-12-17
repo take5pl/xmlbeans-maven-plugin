@@ -38,11 +38,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <scm>
-    <connection>scm:svn:svn://svn.codehaus.org/mojo/tags/xmlbeans-maven-plugin-2.0/mojo</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/tags/xmlbeans-maven-plugin-2.0/mojo</developerConnection>
-    <url>https://svn.codehaus.org/mojo/tags/xmlbeans-maven-plugin-2.0/mojo/xmlbeans-maven-plugin</url>
-  </scm>
   <dependencies>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
