@@ -70,47 +70,50 @@ public class FilteredJarFile extends JarFile
 	public void extractEntry(File prefix, JarEntry entry) throws IOException 
 	{
 		File output = new File(prefix, entry.getName());
-		output.getParentFile().mkdirs();
-		output.createNewFile();
-		InputStream ios = null;
-		FileOutputStream fos = null;
-		try 
-		{
-			ios = getInputStream(entry);
-			fos = new FileOutputStream(output);
-			
-	        byte[] buf = new byte[8192];
-	        while (true) 
-	        {
-	            int length = ios.read(buf);
-	            if (length < 0) break;
-	            fos.write(buf, 0, length);
-	        }
-		}
-		finally 
-		{
-			if (ios != null) 
+		// only do this if the file doesn't exist; otherwise we throw off the
+		// stale file check.
+		if (!output.exists()) {
+			output.getParentFile().mkdirs();
+			output.createNewFile();
+			InputStream ios = null;
+			FileOutputStream fos = null;
+			try 
 			{
-		        try 
+				ios = getInputStream(entry);
+				fos = new FileOutputStream(output);
+				
+		        byte[] buf = new byte[8192];
+		        while (true) 
 		        {
-		        	ios.close();
-		        }
-		        catch  (IOException ignore) 
-		        {
+		            int length = ios.read(buf);
+		            if (length < 0) break;
+		            fos.write(buf, 0, length);
 		        }
 			}
-			if (fos != null) 
+			finally 
 			{
-		        try 
-		        {
-		        	fos.close();
-		        }
-		        catch  (IOException ignore) 
-		        {
-		        }
+				if (ios != null) 
+				{
+			        try 
+			        {
+			        	ios.close();
+			        }
+			        catch  (IOException ignore) 
+			        {
+			        }
+				}
+				if (fos != null) 
+				{
+			        try 
+			        {
+			        	fos.close();
+			        }
+			        catch  (IOException ignore) 
+			        {
+			        }
+				}
 			}
 		}
-        
 	}
 
 }
