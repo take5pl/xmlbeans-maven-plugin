@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -196,6 +197,13 @@ public abstract class AbstractXmlBeansPlugin
     * @required
     */
    private List pluginArtifacts;
+   
+   /**
+    * @parameter expression="${project.artifactMap}"
+    * @required
+    * @readonly
+    */
+   private Map artifactMap;
 
    /**
     * The repository for libraries we depend on.
@@ -706,8 +714,8 @@ public abstract class AbstractXmlBeansPlugin
     */
    private List getArtifactSchemas() throws XmlBeansException 
    {
-	   getLog().debug("Artifact count: " + project.getDependencyArtifacts().size());
-	   SchemaArtifactLookup lookup = new SchemaArtifactLookup(project.getDependencyArtifacts(), getLog());
+	   getLog().debug("Artifact count: " + artifactMap.size());
+	   SchemaArtifactLookup lookup = new SchemaArtifactLookup(artifactMap, getLog());
 	   List artifactSchemas = new ArrayList();
 	   List xsdJars = getXsdJars();
 	   File prefix = getGeneratedSchemaDirectory();

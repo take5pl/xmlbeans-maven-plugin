@@ -1,6 +1,7 @@
 package org.codehaus.mojo.xmlbeans;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -14,9 +15,9 @@ public class SchemaArtifactLookup
 	
 	private Log logger;
 	
-	private Set artifacts;
+	private Map artifacts;
 	
-	public SchemaArtifactLookup(Set projectArtifacts, Log log) 
+	public SchemaArtifactLookup(Map projectArtifacts, Log log) 
 	{
 		artifacts = projectArtifacts;
 		logger = log;
@@ -33,23 +34,12 @@ public class SchemaArtifactLookup
 	public Artifact find(String string) throws XmlBeansException 
 	{
 		Artifact result = null;
-		ArtifactReference ref = new ArtifactReference(string);
 		
-		Artifact nextArtifact = null;
-		
-		for (Iterator i = artifacts.iterator(); i.hasNext(); ) 
+		if (artifacts.containsKey(string))
 		{
-			nextArtifact = (Artifact)i.next();
-			logger.debug("Looking at " + nextArtifact.getArtifactId());
-			if (ref.equals(nextArtifact)) 
-			{
-				result = nextArtifact;
-				logger.debug("Found one.");
-				break;
-			}
+			result = (Artifact)artifacts.get(string);
 		}
-		
-		if (result == null) 
+		else
 		{
 			throw new XmlBeansException(XmlBeansException.INVALID_ARTIFACT_REFERENCE, string);
 		}
