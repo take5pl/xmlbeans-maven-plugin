@@ -21,7 +21,7 @@
 
     <release version="2.0" date="2005-12-1">
       <action dev="kbravo" type="fix" issue="MOJO-76">
-        Usage Documentation is incorrect  either that or articleid is incorrect for xmlbeans.
+        Usage Documentation is incorrect either that or articleid is incorrect for xmlbeans.
       </action>
       <action dev="kbravo" type="fix" issue="MOJO-89">
         problems with managing paths when using xmlbeans-plugin in test phase.
