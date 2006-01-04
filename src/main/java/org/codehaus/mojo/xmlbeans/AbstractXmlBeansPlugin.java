@@ -167,9 +167,7 @@ public abstract class AbstractXmlBeansPlugin
    private String catalogLocation;
 
    /**
-    * A file that points to either an individual schema file or a directory of files.
-    * Not a path reference.  If multiple schema files need to be built together,
-    * use a nested fileset instead of setting schema.
+    * A file that points to a directory of files.
     *
     * @parameter
     */
