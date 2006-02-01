@@ -22,15 +22,95 @@
     </notifiers>
   </ciManagement>
   <developers>
+  
     <developer>
       <id>kbravo</id>
       <name>Kris Bravo</name>
       <email>m2@corridor-software.us</email>
       <organization>Corridor Software, Inc.</organization>
       <organizationUrl>http://www.corridor-software.us</organizationUrl>
+      <roles>
+          <role>Maintainer</role>
+      </roles>
       <timezone>EST</timezone>
     </developer>
+    <developer>
+      <id>brett</id>
+      <name>Brett Porter</name>
+      <organization>Apache Maven Project</organization>
+      <organizationUrl>http://maven.apache.org</organizationUrl>
+      <roles>
+          <role>Port of Original Code</role>
+      </roles>
+    </developer>
   </developers>
+  
+  <contributors>
+    <contributor>
+      <name>Terence Haddock</name>
+      <email>protected</email>
+      <roles>
+          <role>Patch Contributor</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Nathan Sowatskey</name>
+      <email>protected</email>
+      <roles>
+          <role>Active User</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Dan Allen</name>
+      <email>protected</email>
+      <roles>
+          <role>Patch Contributor</role>
+      </roles>
+    </contributor>
+ 	<contributor>
+      <name>Brian Bonner</name>
+      <email>protected</email>
+      <roles>
+          <role>Active User</role>
+      </roles>
+    </contributor>
+ 	<contributor>
+      <name>Piotr Burdylo</name>
+      <email>protected</email>
+      <roles>
+          <role>Active User</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Mike Perham</name>
+      <email>protected</email>
+      <roles>
+          <role>Active User</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Martin Desruisseaux</name>
+      <email>protected</email>
+      <roles>
+          <role>Active User</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Rafal Rusin</name>
+      <email>protected</email>
+      <roles>
+          <role>Patch Contributor</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Christian Domsch</name>
+      <email>protected</email>
+      <roles>
+          <role>Active User</role>
+      </roles>
+    </contributor>
+  </contributors>
+  
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
