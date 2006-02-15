@@ -22,7 +22,7 @@
     </notifiers>
   </ciManagement>
   <developers>
-  
+
     <developer>
       <id>kbravo</id>
       <name>Kris Bravo</name>
@@ -67,14 +67,14 @@
           <role>Patch Contributor</role>
       </roles>
     </contributor>
- 	<contributor>
+    <contributor>
       <name>Brian Bonner</name>
       <email>protected</email>
       <roles>
           <role>Active User</role>
       </roles>
     </contributor>
- 	<contributor>
+    <contributor>
       <name>Piotr Burdylo</name>
       <email>protected</email>
       <roles>
