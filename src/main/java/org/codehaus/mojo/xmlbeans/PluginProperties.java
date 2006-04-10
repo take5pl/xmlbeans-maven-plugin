@@ -96,6 +96,22 @@ interface PluginProperties
     * @return An array of java files.
     */
    File[] getJavaFiles();
+   
+   /**
+    * Returns true if the catalog file exists.
+    *
+    * @number MXMLBEANS-3
+    * @return The existence of the catalog file.
+    */
+   boolean hasCatalogFile();
+
+   /**
+    * Returns the name of the file used to resolve xml entities.
+    *
+    * @number MXMLBEANS-3
+    * @return The entity resolver catalog file location.
+    */
+   String getCatalogFile();
 
    /**
     * Returns a classpath for the compiler made up of artifacts from the project.

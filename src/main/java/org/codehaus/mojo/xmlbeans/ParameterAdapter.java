@@ -37,6 +37,7 @@ public final class ParameterAdapter
    /**
     * Returns a parameter set appropriate for the SchemaCompiler.
     *
+    * @number MXMLBEANS-3
     * @param properties XML Bean Plugin properties.
     * @throws DependencyResolutionRequiredException Maven Dependencies were
     *         not resolved.
@@ -67,6 +68,9 @@ public final class ParameterAdapter
       params.setNoUpa(properties.isNoUpa());
       params.setNoPvr(properties.isNoPvr());
       params.setDebug(properties.isDebug());
+      if (properties.hasCatalogFile()) {
+          params.setCatalogFile(properties.getCatalogFile());
+      }
       params.setErrorListener(properties.getErrorListeners());
       params.setRepackage(properties.getRepackage());
       params.setExtensions(properties.getExtensions());

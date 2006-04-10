@@ -155,11 +155,11 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     private boolean noJavac;
 
     /**
-     * Todo: Unknown use.
-     * 
-     * @parameter
+     * The location of the catalog used to resolve xml entities. 
+     *
+     * @parameter expression="${basedir}/src/main/catalog/resolver-catalog.xml"
      */
-    private String catalogLocation;
+    protected File catalogLocation;
 
     /**
      * A file that points to a directory of files.
@@ -613,6 +613,28 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
         return new File[] {};
     }
 
+    /**
+     * Returns the name of the file used to resolve xml entities.
+     *
+     * @number MXMLBEANS-3
+     * @return The entity resolver catalog file location.
+     */
+    public final boolean hasCatalogFile() {
+        getLog().debug("looking for resolver catalog at " + catalogLocation.getAbsolutePath());
+        return catalogLocation.exists();
+    }
+    
+    /**
+     * Returns the name of the file used to resolve xml entities.
+     *
+     * @number MXMLBEANS-3
+     * @return The entity resolver catalog file location.
+     */
+    public final String getCatalogFile() {
+        getLog().debug("Using resolver catalog.");
+        return catalogLocation.getAbsolutePath();
+    }
+    
     /**
      * Returns a file array of xsd files to translate to object models.
      * 
