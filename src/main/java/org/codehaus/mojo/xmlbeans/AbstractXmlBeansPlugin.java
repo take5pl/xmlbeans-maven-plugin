@@ -587,11 +587,17 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     }
 
     /**
-     * Returns the location of the output jar file should one be produced.
+     * Returns the location of the output jar file should one be produced. If
+     * it has been set, make sure the directories exist before passing it
+     * to the xml beans compiler.
      * 
+     * @number MXMLBEANS-17
      * @return The jar file location.
      */
     public final File getOutputJar() {
+        if (outputJar != null) {
+            outputJar.getParentFile().mkdirs();
+        }
         return outputJar;
     }
 
