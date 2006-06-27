@@ -16,8 +16,20 @@ package org.codehaus.mojo.xmlbeans;
  * limitations under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import org.apache.xmlbeans.impl.tool.SchemaCompiler;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.xml.resolver.CatalogManager;
+import org.apache.xml.resolver.tools.CatalogResolver;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -69,7 +81,12 @@ public final class ParameterAdapter
       params.setNoPvr(properties.isNoPvr());
       params.setDebug(properties.isDebug());
       if (properties.hasCatalogFile()) {
-          params.setCatalogFile(properties.getCatalogFile());
+          CatalogManager catalogManager = CatalogManager.getStaticManager();
+          catalogManager.setCatalogFiles(properties.getCatalogFile());
+          EntityResolver entityResolver = new CatalogResolver();
+          URI sourceDirURI = properties.getBaseDir().toURI();
+          entityResolver = new PassThroughResolver(entityResolver);
+          params.setEntityResolver(entityResolver);
       }
       params.setErrorListener(properties.getErrorListeners());
       params.setRepackage(properties.getRepackage());
@@ -78,4 +95,27 @@ public final class ParameterAdapter
       params.setJavaSource(properties.getJavaSource());
       return params;
    }
+
+    private static class PassThroughResolver implements EntityResolver {
+        private final EntityResolver delegate;
+
+        public PassThroughResolver(EntityResolver delegate) {
+            this.delegate = delegate;
+        }
+
+        public InputSource resolveEntity(String publicId,
+                                         String systemId)
+                throws SAXException, IOException {
+            if (delegate != null) {
+                InputSource is = delegate.resolveEntity(publicId, systemId);
+                if (is != null) {
+                    return is;
+                }
+            }
+            System.out.println("Could not resolve publicId: " + publicId + ", systemId: " + systemId + " from catalog, looking in current directory");
+            return new InputSource(systemId);
+        }
+
+    }
+
 }
