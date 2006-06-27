@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.xmlbeans.impl.tool.SchemaCompiler;
+import org.codehaus.plexus.util.DirectoryScanner;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -650,6 +651,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
         if (xsdFiles == null) {
             File schemaDirectory = getSchemaDirectory();
+            getLog().debug("The schema Directory is " + schemaDirectory);
 
             // take care of artifacts first.
             List schemas = getArtifactSchemas();
@@ -661,12 +663,21 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                     String schemaName = st.nextToken();
                     schemas.add(new File(schemaDirectory, schemaName));
                 }
-            } else {
-                getLog().debug("The schema Directory is " + schemaDirectory);
-                File[] files = schemaDirectory.listFiles(new XSDFile());
+            } else if (schemaDirectory.exists()) {
+                DirectoryScanner scanner = new DirectoryScanner();
+                scanner.setBasedir(schemaDirectory);
+
+                String[] includes = {"**/*.xsd"};
+                scanner.setIncludes(includes);
+                
+                scanner.setCaseSensitive(false);
+                scanner.scan();
+
+                String[] files = scanner.getIncludedFiles();
                 if (files != null) {
                     for (int i = 0; i < files.length; i++) {
-                        schemas.add(files[i]);
+                        getLog().debug("Adding " + files[i]);
+                        schemas.add(new File(schemaDirectory, files[i]));
                     }
                 }
             }
@@ -676,7 +687,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
         return xsdFiles;
     }
-
+    
     /**
      * Sweep through the jar artifacts which contain xsds and produce a list of
      * paths to each xsd within the file. Leave it up to the entity resolver to
@@ -786,23 +797,6 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * @throws XmlBeansException Currently not used.
      */
     public final void validate() throws XmlBeansException {
-    }
-
-    /**
-     * A class used to look up .xsd documents from a given directory.
-     */
-    private final class XSDFile implements FileFilter {
-
-        /**
-         * Returns true if the file ends with an xsd extension.
-         * 
-         * @param file The filed being reviewed by the filter.
-         * @return true if an xsd file.
-         */
-        public boolean accept(final java.io.File file) {
-            return file.getName().endsWith(".xsd");
-        }
-
     }
 
     public void setPluginArtifacts(List pluginArtifacts) {
