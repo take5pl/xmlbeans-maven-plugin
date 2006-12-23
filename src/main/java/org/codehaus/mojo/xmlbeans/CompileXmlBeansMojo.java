@@ -85,7 +85,7 @@ public class CompileXmlBeansMojo
    /**
     * Set a location to generate JAVA files into.
     *
-    * @parameter expression="${project.build.directory}/xmlbeans-source"
+    * @parameter expression="${project.build.directory}/generated-sources/xmlbeans"
     * @required
     */
    protected File sourceGenerationDirectory;
@@ -93,7 +93,7 @@ public class CompileXmlBeansMojo
    /**
     * The location of the flag file used to determine if the output is stale.
     *
-    * @parameter expression="${project.build.directory}/xmlbeans-source/.staleFlag"
+    * @parameter expression="${project.build.directory}/generated-sources/soxmlbeans/.staleFlag"
     * @required
     */
    protected File staleFile;

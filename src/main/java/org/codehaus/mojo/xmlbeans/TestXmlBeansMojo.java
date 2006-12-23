@@ -17,8 +17,8 @@ package org.codehaus.mojo.xmlbeans;
  */
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.xmlbeans.impl.tool.SchemaCompiler;
 
@@ -85,7 +85,7 @@ public class TestXmlBeansMojo
    /**
     * Set a location to generate JAVA files into.
     *
-    * @parameter expression="${project.build.directory}/test-xmlbeans-source"
+    * @parameter expression="${project.build.directory}/generated-sources/test-xmlbeans"
     * @required
     */
    protected File sourceGenerationDirectory;
@@ -93,7 +93,7 @@ public class TestXmlBeansMojo
    /**
     * The location of the flag file used to determine if the output is stale.
     *
-    * @parameter expression="${project.build.directory}/test-xmlbeans-source/.staleFlag"
+    * @parameter expression="${project.build.directory}/generated-sources/test-xmlbeans/.staleFlag"
     * @required
     */
    protected File staleFile;
