@@ -127,7 +127,7 @@ compiler is set - this may be needed for large schema sets.
 
  In some cases it's necessary to customize where the generated sources produced
 by the plugin are stored. This can be done by explicitly defining the source
-generation directory. The default is target/generated-sources/xmlbeans
+generation directory. The default is target/generated-sources/xmlbeans.
 
 --------------------------------------------
       <plugin>

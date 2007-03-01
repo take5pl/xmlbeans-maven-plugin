@@ -93,7 +93,7 @@ public class CompileXmlBeansMojo
    /**
     * The location of the flag file used to determine if the output is stale.
     *
-    * @parameter expression="${project.build.directory}/generated-sources/soxmlbeans/.staleFlag"
+    * @parameter expression="${project.build.directory}/generated-sources/xmlbeans/.staleFlag"
     * @required
     */
    protected File staleFile;
