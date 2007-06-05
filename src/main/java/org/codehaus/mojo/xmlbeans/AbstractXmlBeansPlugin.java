@@ -163,11 +163,11 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     protected File catalogLocation;
 
     /**
-     * A file that points to a directory of files.
+     * A <code>List</code> of source schema files.
      * 
      * @parameter
      */
-    private String sourceSchemas;
+    private List sourceSchemas;
 
     /**
      * Configuration files used by the object generator. For more information
@@ -658,9 +658,8 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
             // take care of the schema directory next.
             if (sourceSchemas != null) {
-                for (StringTokenizer st = new StringTokenizer(sourceSchemas, ","); st
-                        .hasMoreTokens();) {
-                    String schemaName = st.nextToken();
+                for (Iterator iterator = sourceSchemas.iterator(); iterator.hasNext(); ) {
+                    String schemaName = (String)iterator.next();
                     schemas.add(new File(schemaDirectory, schemaName));
                 }
             } else if (schemaDirectory.exists()) {

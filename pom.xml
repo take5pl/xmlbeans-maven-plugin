@@ -13,6 +13,31 @@
   <name>Maven XML Beans Plugin</name>
   <version>2.0.1-SNAPSHOT</version>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>1.0</version>
+        <configuration>
+          <debug>true</debug>
+          <projectsDirectory>src/test/projects</projectsDirectory>
+          <pomIncludes>
+            <pomInclude>**/pom.xml</pomInclude>
+          </pomIncludes>
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
   <developers>
 
     <developer>

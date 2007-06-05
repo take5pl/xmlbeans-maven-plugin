@@ -20,21 +20,25 @@
         <configuration>
            <memoryInitialSize>50m</memoryInitialSize>
            <memoryMaximumSize>80m</memoryMaximumSize>
+           <!--
            <xsdJars>
               <xsdJar implementation="java.lang.String">geronimo:geronimo-tomcat</xsdJar>
            </xsdJars>
+           -->
         </configuration>
       </plugin>
     </plugins>
   </build>
 
   <dependencies>
+           <!--
   <dependency>
     <groupId>geronimo</groupId>
     <artifactId>geronimo-tomcat</artifactId>
     <version>1.0-M5</version>
     <scope>compile</scope>
   </dependency>
+   -->
   </dependencies>
 
 </project>
