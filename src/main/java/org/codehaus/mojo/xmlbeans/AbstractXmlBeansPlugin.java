@@ -433,10 +433,12 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     public final File[] getConfigFiles() throws XmlBeansException {
         File defaultXmlConfigDir = getDefaultXmlConfigDir();
         getLog().debug("Creating a list of config files.");
+        
         try {
             if (xmlConfigs != null) {
                 return (File[]) getFileList(xmlConfigs).toArray(new File[] {});
             } else if (defaultXmlConfigDir.exists()) {
+                getLog().debug("Examining " + defaultXmlConfigDir + " for config files.");
                 List defaultDir = new ArrayList();
                 defaultDir.add(defaultXmlConfigDir);
                 return (File[]) getFileList(defaultDir).toArray(new File[] {});
@@ -456,30 +458,33 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * @return files
      */
     private final List getFileList(List fileList) throws XmlBeansException {
-
         if (fileList != null) {
             getLog().debug("A list was given.");
             List files = new ArrayList();
 
             File nextFile = null;
-            ArrayList nextDir = new ArrayList();
-            for (Iterator i = fileList.iterator(); i.hasNext();) {
-                nextFile = (File) i.next();
+            DirectoryScanner scanner = new DirectoryScanner();
+//            String[] includes = {"**/*"};
+//            scanner.setIncludes(includes);
+            scanner.setCaseSensitive(false);
+            scanner.addDefaultExcludes();
+            for (Iterator iterator = fileList.iterator(); iterator.hasNext();) {
+                
+                nextFile = (File) iterator.next();
                 if (nextFile.exists()) {
-                    // scrub for "hidden" files beginning with '.'
-                    if (nextFile.getName().indexOf('.') != 0) {
-                        if (nextFile.isDirectory()) {
-                            getLog().debug("One entry was a directory. Getting its children too.");
-                            File[] children = nextFile.listFiles();
-                            for (int j = 0; j < children.length; j++) {
-                                nextDir.clear();
-                                nextDir.add(children[j]);
-                                files.addAll(getFileList(nextDir));
+                    if (nextFile.isDirectory()) {
+                        scanner.setBasedir(nextFile);
+                        scanner.scan();
+                        String[] fileArray = scanner.getIncludedFiles();
+                        
+                        if (fileArray != null) {
+                           for (int i = 0; i < fileArray.length; i++) {
+                                getLog().debug("Adding " + fileArray[i]);
+                                files.add(new File(nextFile, fileArray[i]));
                             }
-                        } else {
-                            getLog().debug("Adding file " + nextFile.getAbsolutePath());
-                            files.add(nextFile);
                         }
+                    } else {
+                        files.add(nextFile);
                     }
                 } else {
                     throw new XmlBeansException(XmlBeansException.MISSING_FILE, nextFile
@@ -493,6 +498,9 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
         }
 
     }
+
+                
+
 
     /**
      * Returns a null entity resolver.
@@ -683,6 +691,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
                 String[] includes = {"**/*.xsd"};
                 scanner.setIncludes(includes);
+                scanner.addDefaultExcludes();
                 
                 scanner.setCaseSensitive(false);
                 scanner.scan();
