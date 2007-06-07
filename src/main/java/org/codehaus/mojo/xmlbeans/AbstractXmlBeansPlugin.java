@@ -14,6 +14,7 @@ package org.codehaus.mojo.xmlbeans;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Collection;
@@ -645,6 +646,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     /**
      * Returns a file array of xsd files to translate to object models.
      * 
+     * @number MXMLBEANS-21
      * @return An array of schema files to be parsed by the schema compiler.
      */
     public final File[] getXsdFiles() throws XmlBeansException {
@@ -653,14 +655,27 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
             File schemaDirectory = getSchemaDirectory();
             getLog().debug("The schema Directory is " + schemaDirectory);
 
-            // take care of artifacts first.
-            List schemas = getArtifactSchemas();
-
+            final List schemas = new ArrayList();
+            // collect artifacts first.
+            Map artifactSchemas = getArtifactSchemas();
+            
             // take care of the schema directory next.
             if (sourceSchemas != null) {
+                File nextFile = null;
                 for (Iterator iterator = sourceSchemas.iterator(); iterator.hasNext(); ) {
                     String schemaName = (String)iterator.next();
-                    schemas.add(new File(schemaDirectory, schemaName));
+                    nextFile = new File(schemaDirectory, schemaName);
+                    if (nextFile.exists()) {
+                        schemas.add(nextFile);
+                    } else if (artifactSchemas.containsKey(schemaName)) {
+                        schemas.add(artifactSchemas.get(schemaName));
+                    } else {
+                        String[] fields = new String[2];
+                        fields[0] = schemaName;
+                        fields[1] = schemaDirectory.getAbsolutePath();
+                        fields[3] = (artifactMap.isEmpty() ? "" : " or the schema artifact(s)");
+                        throw new XmlBeansException(XmlBeansException.MISSING_SCHEMA_FILE, fields);
+                    }
                 }
             } else if (schemaDirectory.exists()) {
                 DirectoryScanner scanner = new DirectoryScanner();
@@ -692,13 +707,15 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * paths to each xsd within the file. Leave it up to the entity resolver to
      * pass the actual file to the compiler.
      * 
+     * @number MXMLBEANS-21
+     *
      * @return A list of path's to the XSD's in the artifact jars. This doesn't
      *         include the jar paths.
      */
-    private List getArtifactSchemas() throws XmlBeansException {
+    private Map getArtifactSchemas() throws XmlBeansException {
         getLog().debug("Artifact count: " + artifactMap.size());
         SchemaArtifactLookup lookup = new SchemaArtifactLookup(artifactMap, getLog());
-        List artifactSchemas = new ArrayList();
+        Map artifactSchemas = new HashMap();
         List xsdJars = getXsdJars();
         File prefix = getGeneratedSchemaDirectory();
         int count = xsdJars.size();
@@ -709,10 +726,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
         for (int i = 0; i < count; i++) {
             if (getLog().isDebugEnabled()) {
-                getLog().debug("resolving " + xsdJars.get(i) + "into a file path.");
+                getLog().debug("resolving " + xsdJars.get(i) + " into a file path.");
             }
             nextArtifact = lookup.find((String) xsdJars.get(i));
-            artifactSchemas.addAll(SchemaArtifact.getFilePaths(nextArtifact, getLog(), prefix));
+            artifactSchemas.putAll(SchemaArtifact.getFilePaths(nextArtifact, getLog(), prefix));
         }
 
         return artifactSchemas;

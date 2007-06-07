@@ -71,6 +71,8 @@ public class XmlBeansException
 
    public static final Error STALE_FILE_TOUCH = new Error("file.stale.io");
 
+   public static final Error MISSING_SCHEMA_FILE = new Error("missing.schema.file");
+
    /**
     * A part specific exception with a specific error code.
     *
