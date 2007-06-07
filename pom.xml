@@ -24,7 +24,7 @@
           <debug>true</debug>
           <projectsDirectory>src/test/projects</projectsDirectory>
           <pomIncludes>
-            <pomInclude>**/pomdsf.xml</pomInclude>
+            <pomInclude>**/pom.xml</pomInclude>
           </pomIncludes>
         </configuration>
         <executions>
