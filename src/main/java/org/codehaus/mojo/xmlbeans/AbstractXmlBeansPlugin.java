@@ -310,7 +310,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     }
 
     protected abstract void updateProject(MavenProject project,
-            SchemaCompiler.Parameters compilerParams) throws DependencyResolutionRequiredException;
+            SchemaCompiler.Parameters compilerParams) throws DependencyResolutionRequiredException, XmlBeansException;
 
     protected abstract List getXsdJars();
 

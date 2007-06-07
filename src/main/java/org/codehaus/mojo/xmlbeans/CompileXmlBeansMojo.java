@@ -17,12 +17,14 @@ package org.codehaus.mojo.xmlbeans;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.xmlbeans.impl.tool.SchemaCompiler;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.codehaus.plexus.util.FileUtils;
 
 import org.apache.maven.project.MavenProject;
 
@@ -77,7 +79,7 @@ public class CompileXmlBeansMojo
   /**
     * Set a location to generate CLASS files into.
     *
-    * @parameter expression="${project.build.outputDirectory}"
+    * @parameter expression="${project.build.directory}/generated-classes/xmlbeans"
     * @required
     */
    protected File classGenerationDirectory;
@@ -115,10 +117,24 @@ public class CompileXmlBeansMojo
 
    
    protected void updateProject(MavenProject project, SchemaCompiler.Parameters compilerParams) 
-   throws DependencyResolutionRequiredException
+   throws DependencyResolutionRequiredException, XmlBeansException
    {
+       getLog().debug("Adding " + compilerParams.getSrcDir().getAbsolutePath() + " to the project's compile sources.");
        project.addCompileSourceRoot(compilerParams.getSrcDir().getAbsolutePath());
-       project.getCompileClasspathElements().add(compilerParams.getClassesDir());
+       
+       File outputDirectory = new File( project.getBuild().getOutputDirectory() );
+       if ( !outputDirectory.exists() )
+       {
+           outputDirectory.mkdirs();
+       }
+
+       getLog().debug("Copying generated classes in " + compilerParams.getClassesDir() + " into the output directory.");
+       try {
+            FileUtils.copyDirectoryStructure(compilerParams.getClassesDir(), outputDirectory);
+       } catch (IOException ex) {
+            throw new XmlBeansException(XmlBeansException.COPY_CLASSES, outputDirectory.getAbsolutePath(), ex);
+       }
+       
    }
    
    /**

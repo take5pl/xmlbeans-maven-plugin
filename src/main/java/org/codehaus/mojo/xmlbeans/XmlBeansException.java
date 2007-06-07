@@ -73,6 +73,8 @@ public class XmlBeansException
 
    public static final Error MISSING_SCHEMA_FILE = new Error("missing.schema.file");
 
+   public static final Error COPY_CLASSES = new Error("copy.classes");
+
    /**
     * A part specific exception with a specific error code.
     *

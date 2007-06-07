@@ -17,6 +17,7 @@ package org.codehaus.mojo.xmlbeans;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -25,6 +26,7 @@ import org.apache.xmlbeans.impl.tool.SchemaCompiler;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * <p>A Maven 2 plugin which parses xsd files and produces a corresponding object
@@ -77,7 +79,7 @@ public class TestXmlBeansMojo
    /**
     * Set a location to generate CLASS files into.
     *
-    * @parameter expression="${project.build.testOutputDirectory}"
+    * @parameter expression="${project.build.directory}/generated-classes/test-xmlbeans"
     * @required
     */
    protected File classGenerationDirectory;
@@ -115,10 +117,23 @@ public class TestXmlBeansMojo
 
    
    protected void updateProject(MavenProject project, SchemaCompiler.Parameters compilerParams) 
-   throws DependencyResolutionRequiredException
+   throws DependencyResolutionRequiredException, XmlBeansException
    {
        project.addTestCompileSourceRoot(compilerParams.getSrcDir().getAbsolutePath());
-       project.getTestClasspathElements().add(compilerParams.getClassesDir());
+       
+       File outputDirectory = new File( project.getBuild().getTestOutputDirectory() );
+       if ( !outputDirectory.exists() )
+       {
+           outputDirectory.mkdirs();
+       }
+       
+       getLog().debug("Copying generated test classes into the output directory.");
+       try {
+            FileUtils.copyDirectoryStructure(compilerParams.getClassesDir(), outputDirectory);
+       } catch (IOException ex) {
+            throw new XmlBeansException(XmlBeansException.COPY_CLASSES, outputDirectory.getAbsolutePath(), ex);
+       }
+       
    }
    
    /**
