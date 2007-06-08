@@ -222,8 +222,8 @@
     </dependency>
     <dependency>
       <groupId>xmlbeans</groupId>
-      <artifactId>xbean</artifactId>
-      <version>2.1.0</version>
+      <artifactId>xmlbeans</artifactId>
+      <version>2.2.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -236,12 +236,6 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.4.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>stax</groupId>
-      <artifactId>stax-api</artifactId>
-      <version>1.0.1</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
