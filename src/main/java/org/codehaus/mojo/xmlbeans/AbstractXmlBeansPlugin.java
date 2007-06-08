@@ -24,17 +24,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.xmlbeans.impl.tool.SchemaCompiler;
 import org.codehaus.plexus.util.DirectoryScanner;
+
+import org.apache.xmlbeans.impl.tool.SchemaCompiler;
+import org.apache.xmlbeans.impl.xb.xmlconfig.ConfigDocument;
+import org.apache.xmlbeans.impl.xb.xmlconfig.Extensionconfig;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
+
 import org.xml.sax.EntityResolver;
 
 /**
