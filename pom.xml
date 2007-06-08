@@ -8,7 +8,7 @@
   <artifactId>xmlbeans-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven XML Beans Plugin</name>
-  <version>2.2.0-SNAPSHOT</version>
+  <version>2.2.0</version>
 
   <build>
     <plugins>
@@ -239,4 +239,10 @@
       <scope>compile</scope>
     </dependency>
   </dependencies>
+
+  <scm>
+    <connection>scm:svn:https://svn.codehaus.org/mojo/tags/xmlbeans-maven-plugin-2.2.0</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/tags/xmlbeans-maven-plugin-2.2.0</developerConnection>
+    <url>https://svn.codehaus.org/mojo/tags/xmlbeans-maven-plugin-2.2.0</url>
+  </scm>
 </project>
