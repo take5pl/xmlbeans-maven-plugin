@@ -79,6 +79,8 @@ public final class ParameterAdapter
       params.setDownload(properties.isDownload());
       params.setNoUpa(properties.isNoUpa());
       params.setNoPvr(properties.isNoPvr());
+      params.setNoAnn(properties.isNoAnn());
+      params.setNoVDoc(properties.isNoVDoc());
       params.setDebug(properties.isDebug());
       if (properties.hasCatalogFile()) {
           CatalogManager catalogManager = CatalogManager.getStaticManager();

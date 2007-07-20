@@ -251,6 +251,18 @@ interface PluginProperties
     */
    boolean isJaxb();
 
+    /**
+     * If true, annotations in the schema are ignored
+      * @return true if annotations in the source schema are to be ignored
+     */
+   boolean isNoAnn();
+
+    /**
+     * If true, documentation elements in the source schema are ignored.
+     * @return
+     */
+   boolean isNoVDoc();
+
    /**
     * Validate all of the fields for proper usage.
     *

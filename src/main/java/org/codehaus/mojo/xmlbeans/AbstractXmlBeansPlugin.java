@@ -12,7 +12,6 @@ package org.codehaus.mojo.xmlbeans;
  */
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -158,6 +157,20 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * @parameter default-value="false"
      */
     private boolean noJavac;
+
+    /**
+     * Ignore annotations
+     *
+     * @parameter default-value="false"
+     */
+    private boolean noAnn;
+
+    /**
+     * do not validate documentation elements
+     *
+     * @parameter default-value="false"
+     */
+    private boolean noVDoc;
 
     /**
      * The location of the catalog used to resolve xml entities. 
@@ -772,6 +785,14 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     public final boolean isJaxb() {
         return jaxb;
+    }
+
+    public final boolean isNoAnn() {
+        return noAnn;
+    }
+
+    public final boolean isNoVDoc() {
+        return noVDoc;
     }
 
     /**
