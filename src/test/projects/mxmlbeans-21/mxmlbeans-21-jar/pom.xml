@@ -4,9 +4,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.codehaus.mojo</groupId>
-  <artifactId>xmlbeans-mxmlbeans-25-jar</artifactId>
+  <artifactId>xmlbeans-mxmlbeans-21-jar</artifactId>
   <packaging>jar</packaging>
   <version>1.0</version>
-  <name>XMLBeans test dependency for MXMLBEANS-25</name>
+  <name>XMLBeans test dependency for MXMLBEANS-21</name>
 
 </project>

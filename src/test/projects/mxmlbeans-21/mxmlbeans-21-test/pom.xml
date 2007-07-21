@@ -4,10 +4,10 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.codehaus.mojo</groupId>
-  <artifactId>xmlbeans-mxmlbeans-25-test</artifactId>
+  <artifactId>xmlbeans-mxmlbeans-21-test</artifactId>
   <packaging>jar</packaging>
   <version>1.0</version>
-  <name>XMLBeans discrete xsd's in a jar test for MXMLBEANS-25</name>
+  <name>XMLBeans discrete xsd's in a jar test for MXMLBEANS-21</name>
   <build>
     <plugins>
       <plugin>
@@ -23,7 +23,7 @@
         <inherited>true</inherited>
         <configuration>
            <xsdJars>
-              <xsdJar implementation="java.lang.String">org.codehaus.mojo:xmlbeans-mxmlbeans-25-jar</xsdJar>
+              <xsdJar implementation="java.lang.String">org.codehaus.mojo:xmlbeans-mxmlbeans-21-jar</xsdJar>
            </xsdJars>
            <!-- try to only build a single schema from the jar file. 
            -->
@@ -38,7 +38,7 @@
   <dependencies>
       <dependency>
           <groupId>org.codehaus.mojo</groupId>
-          <artifactId>xmlbeans-mxmlbeans-25-jar</artifactId>
+          <artifactId>xmlbeans-mxmlbeans-21-jar</artifactId>
           <version>${pom.version}</version>
           <scope>provided</scope>
       </dependency>
