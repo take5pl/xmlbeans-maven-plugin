@@ -40,11 +40,11 @@
   <developers>
 
     <developer>
-      <id>kbravo</id>
-      <name>Kris Bravo</name>
-      <email>m2@corridor-software.us</email>
-      <organization>Corridor Software, Inc.</organization>
-      <organizationUrl>http://www.corridor-software.us</organizationUrl>
+      <id>djencks</id>
+      <name>David Jencks</name>
+      <email>david_jencks@yahoo.com</email>
+      <organization>Apache Geronimo Project</organization>
+      <organizationUrl>http://geronimo.apache.org</organizationUrl>
       <roles>
           <role>Maintainer</role>
       </roles>
