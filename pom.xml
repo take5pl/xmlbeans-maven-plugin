@@ -10,6 +10,11 @@
   <name>Maven XML Beans Plugin</name>
   <version>2.3.1-SNAPSHOT</version>
 
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MXMLBEANS</url>
+  </issueManagement>
+
   <build>
     <plugins>
       <!--
