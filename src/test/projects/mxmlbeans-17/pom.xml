@@ -11,14 +11,14 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>xmlbeans-maven-plugin</artifactId>
         <executions>
-           <execution>
-              <goals>
-                 <goal>xmlbeans</goal>
-              </goals>
-           </execution>
+          <execution>
+            <goals>
+              <goal>xmlbeans</goal>
+            </goals>
+          </execution>
         </executions>
         <configuration>
-           <outputJar>${project.build.directory}/libs/result.jar</outputJar>
+          <outputJar>${project.build.directory}/libs/result.jar</outputJar>
         </configuration>
       </plugin>
     </plugins>

@@ -1,70 +1,71 @@
 package org.codehaus.mojo.xmlbeans;
 
-/*
- * Copyright 2001-2005 The Apache Software Foundation. Licensed under the Apache
- * License, Version 2.0 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+/**
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Collection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
-import org.codehaus.plexus.util.DirectoryScanner;
-
-import org.apache.xmlbeans.impl.tool.SchemaCompiler;
-import org.apache.xmlbeans.impl.xb.xmlconfig.ConfigDocument;
-import org.apache.xmlbeans.impl.xb.xmlconfig.Extensionconfig;
-
-import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
-
+import org.apache.xmlbeans.impl.tool.SchemaCompiler;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.xml.sax.EntityResolver;
 
 /**
- * <p>
+ * <p/>
  * A Maven 2 plugin which parses xsd files and produces a corresponding object
  * model based on the Apache XML Beans parser.
  * </p>
- * <p>
+ * <p/>
  * The plugin produces two sets of output files referred to as generated sources
  * and generated classes. The former is then compiled to the build
  * <code>outputDirectory</code>. The latter is generated in this directory.
  * </p>
- * <p>
+ * <p/>
  * Note that the descriptions for the goal's parameters have been blatently
  * copied from http://xmlbeans.apache.org/docs/2.0.0/guide/antXmlbean.html for
  * convenience.
  * </p>
- * 
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:kris.bravo@corridor-software.us">Kris Bravo</a>
  * @version $Id$
  */
-public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements PluginProperties {
+public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements PluginProperties
+{
 
     /**
      * Define the name of the jar file created. For instance, "myXMLBean.jar"
      * will output the results of this task into a jar with the same name.
-     * 
+     *
      * @parameter
      */
     private File outputJar;
@@ -73,7 +74,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * Set to true to permit the compiler to download URLs for imports and
      * includes. Defaults to false, meaning all imports and includes must be
      * copied locally.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean download;
@@ -84,7 +85,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * line for compilers that support it (for other compilers, no command line
      * argument will be used). If set to true, the value of the debug level
      * attribute determines the command line argument.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean debug;
@@ -93,7 +94,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * The initial size of the memory for the underlying VM, if javac is run
      * externally; ignored otherwise. Defaults to the standard VM memory
      * setting. (Examples: 83886080, 81920k, or 80m)
-     * 
+     *
      * @parameter
      */
     private String memoryInitialSize;
@@ -102,7 +103,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * The maximum size of the memory for the underlying VM, if javac is run
      * externally; ignored otherwise. Defaults to the standard VM memory
      * setting. (Examples: 83886080, 81920k, or 80m)
-     * 
+     *
      * @parameter
      */
     private String memoryMaximumSize;
@@ -111,49 +112,49 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * The compiler implementation to use. If this attribute is not set, the
      * value of the build.compiler property, if set, will be used. Otherwise,
      * the default compiler for the current VM will be used.
-     * 
+     *
      * @parameter
      */
     private String compiler;
 
     /**
      * Controls the amount of build message output.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean verbose;
 
     /**
      * Supress the normal amount of console output.
-     * 
+     *
      * @parameter default-value="true"
      */
     private boolean quiet = true;
 
     /**
      * Do not enforce the unique particle attribution rule.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean noUpa;
 
     /**
      * Do not enforce the particle valid (restriction) rule.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean noPvr;
 
     /**
      * Todo: Unkown use.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean jaxb;
 
     /**
      * Don't compile the generated source files.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean noJavac;
@@ -173,7 +174,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     private boolean noVDoc;
 
     /**
-     * The location of the catalog used to resolve xml entities. 
+     * The location of the catalog used to resolve xml entities.
      *
      * @parameter expression="${basedir}/src/main/catalog/resolver-catalog.xml"
      */
@@ -181,7 +182,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
     /**
      * A <code>List</code> of source schema files.
-     * 
+     *
      * @parameter
      */
     private List sourceSchemas;
@@ -189,7 +190,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     /**
      * Configuration files used by the object generator. For more information
      * about the format of these files, see Todo.
-     * 
+     *
      * @parameter
      */
     private List xmlConfigs;
@@ -197,7 +198,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     /**
      * Returns the javasource parameter which specifies an option to the
      * XmlBeans code generator.
-     * 
+     *
      * @parameter
      * @return null.
      */
@@ -218,7 +219,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
     /**
      * The repository for libraries we depend on.
-     * 
+     *
      * @parameter expression="${localRepository}"
      * @required
      * @readonly
@@ -234,7 +235,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
     /**
      * A reference to the Maven Project metadata.
-     * 
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -248,7 +249,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     private EntityResolver entityResolver = null;
 
     /**
-     * 
+     *
      */
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
@@ -260,108 +261,133 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     /**
      * Empty constructor for the XML Beans plugin.
      */
-    public AbstractXmlBeansPlugin() {
+    public AbstractXmlBeansPlugin()
+    {
     }
 
     /**
-     * <p>
+     * <p/>
      * Map the parameters to the schema compilers parameter object, make sure
      * the necessary output directories exist, then call on the schema compiler
      * to produce the java objects and supporting resources.
      * </p>
-     * 
-     * @number MOJO-270
-     * 
+     *
      * @throws MojoExecutionException Errors occurred during compile.
+     * @number MOJO-270
      */
-    public final void execute() throws org.apache.maven.plugin.MojoExecutionException {
+    public final void execute() throws MojoExecutionException
+    {
 
-        if (hasSchemas()) {
-            try {
+        if ( hasSchemas() )
+        {
+            try
+            {
                 SchemaCompiler.Parameters compilerParams = ParameterAdapter
-                        .getCompilerParameters(this);
-                if (isOutputStale()) {
-                    try {
+                        .getCompilerParameters( this );
+                if ( isOutputStale() )
+                {
+                    try
+                    {
                         compilerParams.getSrcDir().mkdirs();
 
-                        boolean result = SchemaCompiler.compile(compilerParams);
+                        boolean result = SchemaCompiler.compile( compilerParams );
 
-                        if (!result) {
+                        if ( !result )
+                        {
                             StringBuffer errors = new StringBuffer();
-                            for (Iterator iterator = compilerParams.getErrorListener().iterator(); iterator
-                                    .hasNext();) {
-                                Object o = (Object) iterator.next();
-                                errors.append("xml Error" + o);
-                                errors.append("\n");
+                            for ( Iterator iterator = compilerParams.getErrorListener().iterator(); iterator
+                                    .hasNext(); )
+                            {
+                                Object o = iterator.next();
+                                errors.append( "xml Error" ).append( o );
+                                errors.append( "\n" );
                             }
-                            throw new XmlBeansException(XmlBeansException.COMPILE_ERRORS, errors
-                                    .toString());
+                            throw new XmlBeansException( XmlBeansException.COMPILE_ERRORS, errors
+                                    .toString() );
                         }
 
                         touchStaleFile();
-                    } catch (IOException ioe) {
-                        throw new XmlBeansException(XmlBeansException.STALE_FILE_TOUCH,
-                                getStaleFile().getAbsolutePath(), ioe);
                     }
-                } else {
-                    getLog().info("All schema objects are up to date.");
+                    catch ( IOException ioe )
+                    {
+                        throw new XmlBeansException( XmlBeansException.STALE_FILE_TOUCH,
+                                getStaleFile().getAbsolutePath(), ioe );
+                    }
                 }
-                updateProject(project, compilerParams);
-            } catch (DependencyResolutionRequiredException drre) {
-                throw new XmlBeansException(XmlBeansException.CLASSPATH_DEPENDENCY, drre);
+                else
+                {
+                    getLog().info( "All schema objects are up to date." );
+                }
+                updateProject( project, compilerParams );
             }
-        } else {
-            getLog().info("Nothing to generate.");
+            catch ( DependencyResolutionRequiredException drre )
+            {
+                throw new XmlBeansException( XmlBeansException.CLASSPATH_DEPENDENCY, drre );
+            }
+        }
+        else
+        {
+            getLog().info( "Nothing to generate." );
         }
     }
 
     /**
      * Indicates whether or not there are schemas to compile.
-     * 
+     *
      * @return true if there are schema files in the source or artifacts.
-     * @throws XmlBeansException
+     * @throws XmlBeansException if we cannot determine if there are xsd files
      */
-    private boolean hasSchemas() throws XmlBeansException {
+    private boolean hasSchemas() throws XmlBeansException
+    {
         return getXsdFiles().length > 0;
     }
 
-    protected abstract void updateProject(MavenProject project,
-            SchemaCompiler.Parameters compilerParams) throws DependencyResolutionRequiredException, XmlBeansException;
+    protected abstract void updateProject( MavenProject project,
+                                           SchemaCompiler.Parameters compilerParams ) throws DependencyResolutionRequiredException, XmlBeansException;
 
     protected abstract List getXsdJars();
 
     protected abstract File getGeneratedSchemaDirectory();
 
-    private void touchStaleFile() throws IOException {
+    private void touchStaleFile() throws IOException
+    {
         File staleFile = getStaleFile();
 
-        if (!staleFile.exists()) {
+        if ( !staleFile.exists() )
+        {
             staleFile.getParentFile().mkdirs();
             staleFile.createNewFile();
-            getLog().debug("Stale flag file created.");
-        } else {
-            staleFile.setLastModified(System.currentTimeMillis());
+            getLog().debug( "Stale flag file created." );
+        }
+        else
+        {
+            staleFile.setLastModified( System.currentTimeMillis() );
         }
     }
 
     /**
      * Returns true of any one of the files in the XSD array are more new than
      * the <code>staleFlag</code> file.
-     * 
+     *
      * @return True if xsd files have been modified since the last build.
+     * @throws XmlBeansException if we cannot locate one of the xsd files
      */
-    private boolean isOutputStale() throws XmlBeansException {
+    private boolean isOutputStale() throws XmlBeansException
+    {
         File[] sourceXsds = getXsdFiles();
         File staleFile = getStaleFile();
         boolean stale = !staleFile.exists();
 
-        if (!stale) {
-            getLog().debug("Stale flag file exists, comparing to xsd's.");
+        if ( !stale )
+        {
+            getLog().debug( "Stale flag file exists, comparing to xsd's." );
             long staleMod = staleFile.lastModified();
 
-            for (int i = 0; i < sourceXsds.length; i++) {
-                if (sourceXsds[i].lastModified() > staleMod) {
-                    getLog().debug(sourceXsds[i].getName() + " is newer than the stale flag file.");
+            for ( int i = 0; i < sourceXsds.length; i++ )
+            {
+                if ( sourceXsds[i].lastModified() > staleMod )
+                {
+                    getLog().debug( sourceXsds[i].getName() + " is newer than the stale flag file." );
                     stale = true;
                 }
             }
@@ -371,10 +397,11 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
     /**
      * Gives the plugin a reference to the local repository.
-     * 
+     *
      * @param repository The local repository.
      */
-    public final void setLocalRepository(final ArtifactRepository repository) {
+    public final void setLocalRepository( final ArtifactRepository repository )
+    {
         localRepository = repository;
     }
 
@@ -387,7 +414,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     /**
      * Returns the directory where the schemas are located. Note that this is
      * the base directory of the schema compiler, not the maven project.
-     * 
+     *
      * @return The schema directory.
      */
     public abstract File getSchemaDirectory();
@@ -395,47 +422,54 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     /**
      * Returns a classpath for the compiler made up of artifacts from the
      * project.
-     * 
+     *
      * @return Array of classpath entries.
      */
-    public final File[] getClasspath() {
-        List results = new ArrayList(project.getArtifacts().size()
-                + project.getPluginArtifacts().size());
-        for (Iterator i = project.getArtifacts().iterator(); i.hasNext();) {
-            Artifact a = (Artifact) i.next();
-            if (a.getFile() != null && ("jar".equals(a.getType()) || "zip".equals(a.getType()))) {
-                results.add(a.getFile());
+    public final File[] getClasspath()
+    {
+        List results = new ArrayList( project.getArtifacts().size()
+                + project.getPluginArtifacts().size() );
+        for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
+        {
+            Artifact a = ( Artifact ) i.next();
+            if ( a.getFile() != null && ( "jar".equals( a.getType() ) || "zip".equals( a.getType() ) ) )
+            {
+                results.add( a.getFile() );
             }
         }
 
         // TODO: use addArtifacts
-        Set set = new HashSet(project.getDependencyArtifacts());
+        Set set = new HashSet( project.getDependencyArtifacts() );
 
-        if (pluginArtifacts != null) {
-            for (Iterator i = pluginArtifacts.iterator(); i.hasNext();) {
-                Artifact a = (Artifact) i.next();
-                if (a.getFile() != null && ("jar".equals(a.getType()) || "zip".equals(a.getType()))) {
-                    results.add(a.getFile());
+        if ( pluginArtifacts != null )
+        {
+            for ( Iterator i = pluginArtifacts.iterator(); i.hasNext(); )
+            {
+                Artifact a = ( Artifact ) i.next();
+                if ( a.getFile() != null && ( "jar".equals( a.getType() ) || "zip".equals( a.getType() ) ) )
+                {
+                    results.add( a.getFile() );
 
-                    a = factory.createArtifact(a.getGroupId(), a.getArtifactId(), a.getVersion(),
-                            Artifact.SCOPE_COMPILE, a.getType());
-                    set.add(a);
+                    a = factory.createArtifact( a.getGroupId(), a.getArtifactId(), a.getVersion(),
+                            Artifact.SCOPE_COMPILE, a.getType() );
+                    set.add( a );
                 }
             }
         }
 
-        project.setDependencyArtifacts(set);
+        project.setDependencyArtifacts( set );
 
-        return (File[]) results.toArray(EMPTY_FILE_ARRAY);
+        return ( File[] ) results.toArray( EMPTY_FILE_ARRAY );
     }
 
     /**
      * Returns null. Currently the compiler preference isn't passwed to the xml
      * beans compiler.
-     * 
+     *
      * @return null.
      */
-    public final String getCompiler() {
+    public final String getCompiler()
+    {
         return compiler;
     }
 
@@ -443,172 +477,202 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * Returns configuration files identified in the xmlConfigs string passed by
      * the project configuration. If none were identified, a check is made for
      * the default xsd config directory src/xsdconfig.
-     * 
+     *
      * @return An array of configuration files.
      */
-    public final File[] getConfigFiles() throws XmlBeansException {
+    public final File[] getConfigFiles() throws XmlBeansException
+    {
         File defaultXmlConfigDir = getDefaultXmlConfigDir();
-        getLog().debug("Creating a list of config files.");
-        
-        try {
-            if (xmlConfigs != null) {
-                return (File[]) getFileList(xmlConfigs).toArray(new File[] {});
-            } else if (defaultXmlConfigDir.exists()) {
-                getLog().debug("Examining " + defaultXmlConfigDir + " for config files.");
+        getLog().debug( "Creating a list of config files." );
+
+        try
+        {
+            if ( xmlConfigs != null )
+            {
+                return ( File[] ) getFileList( xmlConfigs ).toArray( new File[]{} );
+            }
+            else if ( defaultXmlConfigDir.exists() )
+            {
+                getLog().debug( "Examining " + defaultXmlConfigDir + " for config files." );
                 List defaultDir = new ArrayList();
-                defaultDir.add(defaultXmlConfigDir);
-                return (File[]) getFileList(defaultDir).toArray(new File[] {});
-            } else {
+                defaultDir.add( defaultXmlConfigDir );
+                return ( File[] ) getFileList( defaultDir ).toArray( new File[]{} );
+            }
+            else
+            {
                 return null;
             }
-        } catch (XmlBeansException xmlbe) {
-            throw new XmlBeansException(XmlBeansException.INVALID_CONFIG_FILE, xmlbe);
+        }
+        catch ( XmlBeansException xmlbe )
+        {
+            throw new XmlBeansException( XmlBeansException.INVALID_CONFIG_FILE, xmlbe );
         }
     }
 
     /**
      * Recursively travers the file list and it's subdirs and produce a single
      * flat list of the files.
-     * 
+     *
      * @param fileList
      * @return files
      */
-    private final List getFileList(List fileList) throws XmlBeansException {
-        if (fileList != null) {
-            getLog().debug("A list was given.");
+    private final List getFileList( List fileList ) throws XmlBeansException
+    {
+        if ( fileList != null )
+        {
+            getLog().debug( "A list was given." );
             List files = new ArrayList();
 
             File nextFile = null;
             DirectoryScanner scanner = new DirectoryScanner();
 //            String[] includes = {"**/*"};
 //            scanner.setIncludes(includes);
-            scanner.setCaseSensitive(false);
+            scanner.setCaseSensitive( false );
             scanner.addDefaultExcludes();
-            for (Iterator iterator = fileList.iterator(); iterator.hasNext();) {
-                
-                nextFile = (File) iterator.next();
-                if (nextFile.exists()) {
-                    if (nextFile.isDirectory()) {
-                        scanner.setBasedir(nextFile);
+            for ( Iterator iterator = fileList.iterator(); iterator.hasNext(); )
+            {
+
+                nextFile = ( File ) iterator.next();
+                if ( nextFile.exists() )
+                {
+                    if ( nextFile.isDirectory() )
+                    {
+                        scanner.setBasedir( nextFile );
                         scanner.scan();
                         String[] fileArray = scanner.getIncludedFiles();
-                        
-                        if (fileArray != null) {
-                           for (int i = 0; i < fileArray.length; i++) {
-                                getLog().debug("Adding " + fileArray[i]);
-                                files.add(new File(nextFile, fileArray[i]));
+
+                        if ( fileArray != null )
+                        {
+                            for ( int i = 0; i < fileArray.length; i++ )
+                            {
+                                getLog().debug( "Adding " + fileArray[i] );
+                                files.add( new File( nextFile, fileArray[i] ) );
                             }
                         }
-                    } else {
-                        files.add(nextFile);
                     }
-                } else {
-                    throw new XmlBeansException(XmlBeansException.MISSING_FILE, nextFile
-                            .getAbsolutePath());
+                    else
+                    {
+                        files.add( nextFile );
+                    }
+                }
+                else
+                {
+                    throw new XmlBeansException( XmlBeansException.MISSING_FILE, nextFile
+                            .getAbsolutePath() );
                 }
             }
             return files;
-        } else {
-            getLog().debug("No list was given. Returning.");
+        }
+        else
+        {
+            getLog().debug( "No list was given. Returning." );
             return null;
         }
 
     }
 
-                
-
 
     /**
      * Returns a null entity resolver.
-     * 
+     *
      * @return entityResolver set to null.
      */
-    public final EntityResolver getEntityResolver() {
+    public final EntityResolver getEntityResolver()
+    {
         return entityResolver;
     }
 
     /**
      * Returns an empty collection the compiler will store error message Strings
      * in.
-     * 
+     *
      * @return An empty ArrayList.
      */
-    public final Collection getErrorListeners() {
+    public final Collection getErrorListeners()
+    {
         Collection listener = new ArrayList();
         return listener;
     }
 
     /**
      * Todo: Not certain of the purpose of this.
-     * 
+     *
      * @return null at this time.
      */
-    public final List getExtensions() {
+    public final List getExtensions()
+    {
         return null;
     }
 
     /**
      * Used during testing.
-     * 
-     * @param project
+     *
+     * @param project the maven project we are setting.
      */
-    final void setProject(MavenProject newProject) {
-        project = newProject;
+    final void setProject( MavenProject project )
+    {
+        this.project = project;
     }
 
     /**
      * An array of other source files. Currently an empty array.
-     * 
+     *
      * @return An empty file array.
      */
-    public final File[] getJavaFiles() {
-        return new File[] {};
+    public final File[] getJavaFiles()
+    {
+        return new File[]{};
     }
 
     /**
      * Returns null at this time. Passed to the schema compiler.
-     * 
+     *
      * @return null.
      */
-    public final Set getMdefNamespaces() {
+    public final Set getMdefNamespaces()
+    {
         return null;
     }
 
     /**
-     * 
-     * 
-     * 
+     *
+     *
+     *
      */
-    public final String getJavaSource() {
+    public final String getJavaSource()
+    {
         return javaSource;
     }
 
     /**
      * Returns the initial size of the memory allocation for the schema compile
      * process.
-     * 
+     *
      * @return The initial memory size value.
      */
-    public final String getMemoryInitialSize() {
+    public final String getMemoryInitialSize()
+    {
         return memoryInitialSize;
     }
 
     /**
      * Returns the maximum size of the memory allocation for the schema compile
      * process.
-     * 
+     *
      * @return The max memory size value.
      */
-    public final String getMemoryMaximumSize() {
+    public final String getMemoryMaximumSize()
+    {
         return memoryMaximumSize;
     }
 
     /**
      * Returns null at this time. This is passed to the schema compiler.
-     * 
+     *
      * @return null.
      */
-    public final String getName() {
+    public final String getName()
+    {
         return null;
     }
 
@@ -616,12 +680,14 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * Returns the location of the output jar file should one be produced. If
      * it has been set, make sure the directories exist before passing it
      * to the xml beans compiler.
-     * 
-     * @number MXMLBEANS-17
+     *
      * @return The jar file location.
+     * @number MXMLBEANS-17
      */
-    public final File getOutputJar() {
-        if (outputJar != null) {
+    public final File getOutputJar()
+    {
+        if ( outputJar != null )
+        {
             outputJar.getParentFile().mkdirs();
         }
         return outputJar;
@@ -629,117 +695,134 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
     /**
      * Todo: Not certain of the purpose of this.
-     * 
+     *
      * @return null at this time.
      */
-    public final String getRepackage() {
+    public final String getRepackage()
+    {
         return null;
     }
 
     /**
      * Currently returns an empty file array.
-     * 
+     *
      * @return An empty file array.
      */
-    public final File[] getWsdlFiles() {
-        return new File[] {};
+    public final File[] getWsdlFiles()
+    {
+        return new File[]{};
     }
 
     /**
      * Returns the name of the file used to resolve xml entities.
      *
-     * @number MXMLBEANS-3
      * @return The entity resolver catalog file location.
+     * @number MXMLBEANS-3
      */
-    public final boolean hasCatalogFile() {
-        getLog().debug("looking for resolver catalog at " + catalogLocation.getAbsolutePath());
+    public final boolean hasCatalogFile()
+    {
+        getLog().debug( "looking for resolver catalog at " + catalogLocation.getAbsolutePath() );
         return catalogLocation.exists();
     }
-    
+
     /**
      * Returns the name of the file used to resolve xml entities.
      *
-     * @number MXMLBEANS-3
      * @return The entity resolver catalog file location.
+     * @number MXMLBEANS-3
      */
-    public final String getCatalogFile() {
-        getLog().debug("Using resolver catalog.");
+    public final String getCatalogFile()
+    {
+        getLog().debug( "Using resolver catalog." );
         return catalogLocation.getAbsolutePath();
     }
-    
+
     /**
      * Returns a file array of xsd files to translate to object models.
-     * 
-     * @number MXMLBEANS-21
+     *
      * @return An array of schema files to be parsed by the schema compiler.
+     * @number MXMLBEANS-21
      */
-    public final File[] getXsdFiles() throws XmlBeansException {
+    public final File[] getXsdFiles() throws XmlBeansException
+    {
 
-        if (xsdFiles == null) {
+        if ( xsdFiles == null )
+        {
             File schemaDirectory = getSchemaDirectory();
-            getLog().debug("The schema Directory is " + schemaDirectory);
+            getLog().debug( "The schema Directory is " + schemaDirectory );
 
             final List schemas = new ArrayList();
             // collect artifacts first.
             Map artifactSchemas = getArtifactSchemas();
-            
+
             // take care of the schema directory next.
-            if (sourceSchemas != null) {
+            if ( sourceSchemas != null )
+            {
                 File nextFile = null;
-                for (Iterator iterator = sourceSchemas.iterator(); iterator.hasNext(); ) {
-                    String schemaName = (String)iterator.next();
-                    nextFile = new File(schemaDirectory, schemaName);
-                    if (nextFile.exists()) {
-                        schemas.add(nextFile);
-                    } else if (artifactSchemas.containsKey(schemaName)) {
-                        schemas.add(artifactSchemas.get(schemaName));
-                    } else {
+                for ( Iterator iterator = sourceSchemas.iterator(); iterator.hasNext(); )
+                {
+                    String schemaName = ( String ) iterator.next();
+                    nextFile = new File( schemaDirectory, schemaName );
+                    if ( nextFile.exists() )
+                    {
+                        schemas.add( nextFile );
+                    }
+                    else if ( artifactSchemas.containsKey( schemaName ) )
+                    {
+                        schemas.add( artifactSchemas.get( schemaName ) );
+                    }
+                    else
+                    {
                         String[] fields = new String[2];
                         fields[0] = schemaName;
                         fields[1] = schemaDirectory.getAbsolutePath();
-                        fields[3] = (artifactMap.isEmpty() ? "" : " or the schema artifact(s)");
-                        throw new XmlBeansException(XmlBeansException.MISSING_SCHEMA_FILE, fields);
+                        fields[3] = ( artifactMap.isEmpty() ? "" : " or the schema artifact(s)" );
+                        throw new XmlBeansException( XmlBeansException.MISSING_SCHEMA_FILE, fields );
                     }
                 }
-            } else if (schemaDirectory.exists()) {
+            }
+            else if ( schemaDirectory.exists() )
+            {
                 DirectoryScanner scanner = new DirectoryScanner();
-                scanner.setBasedir(schemaDirectory);
+                scanner.setBasedir( schemaDirectory );
 
                 String[] includes = {"**/*.xsd"};
-                scanner.setIncludes(includes);
+                scanner.setIncludes( includes );
                 scanner.addDefaultExcludes();
-                
-                scanner.setCaseSensitive(false);
+
+                scanner.setCaseSensitive( false );
                 scanner.scan();
 
                 String[] files = scanner.getIncludedFiles();
-                if (files != null) {
-                    for (int i = 0; i < files.length; i++) {
-                        getLog().debug("Adding " + files[i]);
-                        schemas.add(new File(schemaDirectory, files[i]));
+                if ( files != null )
+                {
+                    for ( int i = 0; i < files.length; i++ )
+                    {
+                        getLog().debug( "Adding " + files[i] );
+                        schemas.add( new File( schemaDirectory, files[i] ) );
                     }
                 }
             }
 
-            xsdFiles = (File[]) schemas.toArray(new File[] {});
+            xsdFiles = ( File[] ) schemas.toArray( new File[]{} );
         }
 
         return xsdFiles;
     }
-    
+
     /**
      * Sweep through the jar artifacts which contain xsds and produce a list of
      * paths to each xsd within the file. Leave it up to the entity resolver to
      * pass the actual file to the compiler.
-     * 
-     * @number MXMLBEANS-21
      *
      * @return A list of path's to the XSD's in the artifact jars. This doesn't
      *         include the jar paths.
+     * @number MXMLBEANS-21
      */
-    private Map getArtifactSchemas() throws XmlBeansException {
-        getLog().debug("Artifact count: " + artifactMap.size());
-        SchemaArtifactLookup lookup = new SchemaArtifactLookup(artifactMap, getLog());
+    private Map getArtifactSchemas() throws XmlBeansException
+    {
+        getLog().debug( "Artifact count: " + artifactMap.size() );
+        SchemaArtifactLookup lookup = new SchemaArtifactLookup( artifactMap, getLog() );
         Map artifactSchemas = new HashMap();
         List xsdJars = getXsdJars();
         File prefix = getGeneratedSchemaDirectory();
@@ -747,14 +830,16 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
         // Collect the file paths to the actual jars
         Artifact nextArtifact = null;
-        getLog().debug("looking for artifact schemas.");
+        getLog().debug( "looking for artifact schemas." );
 
-        for (int i = 0; i < count; i++) {
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("resolving " + xsdJars.get(i) + " into a file path.");
+        for ( int i = 0; i < count; i++ )
+        {
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "resolving " + xsdJars.get( i ) + " into a file path." );
             }
-            nextArtifact = lookup.find((String) xsdJars.get(i));
-            artifactSchemas.putAll(SchemaArtifact.getFilePaths(nextArtifact, getLog(), prefix));
+            nextArtifact = lookup.find( ( String ) xsdJars.get( i ) );
+            artifactSchemas.putAll( SchemaArtifact.getFilePaths( nextArtifact, getLog(), prefix ) );
         }
 
         return artifactSchemas;
@@ -762,93 +847,105 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
     /**
      * Returns the state of debuggin.
-     * 
+     *
      * @return true if debug mode.
      */
-    public final boolean isDebug() {
+    public final boolean isDebug()
+    {
         return debug;
     }
 
     /**
      * Returns true if dependencies are to be downloaded by the schema compiler.
-     * 
+     *
      * @return true if resources should be downloaded.
      */
-    public final boolean isDownload() {
+    public final boolean isDownload()
+    {
         return download;
     }
 
     /**
      * Returns true if jaxb is set.
-     * 
+     *
      * @return true if the jaxb flag on the schema compiler should be set.
      */
-    public final boolean isJaxb() {
+    public final boolean isJaxb()
+    {
         return jaxb;
     }
 
-    public final boolean isNoAnn() {
+    public final boolean isNoAnn()
+    {
         return noAnn;
     }
 
-    public final boolean isNoVDoc() {
+    public final boolean isNoVDoc()
+    {
         return noVDoc;
     }
 
     /**
      * Returns True if generated source files are not to be compiled.
-     * 
+     *
      * @return true if no compiling should occur.
      */
-    public final boolean isNoJavac() {
+    public final boolean isNoJavac()
+    {
         return noJavac;
     }
 
     /**
      * Do not enforce the particle valid (restriction) rule if true.
-     * 
+     *
      * @return true if no enforcement should occur.
      */
-    public final boolean isNoPvr() {
+    public final boolean isNoPvr()
+    {
         return noPvr;
     }
 
     /**
      * If true, do not enforce the unique particle attribution rule.
-     * 
+     *
      * @return particle attibution enforcement
      */
-    public final boolean isNoUpa() {
+    public final boolean isNoUpa()
+    {
         return noUpa;
     }
 
     /**
      * Returns true if the schema compiler should reduce verbosity.
-     * 
+     *
      * @return true if message suppression is on.
      */
-    public final boolean isQuiet() {
+    public final boolean isQuiet()
+    {
         return quiet;
     }
 
     /**
      * Returns true if the schema compiler should increase verbosity.
-     * 
+     *
      * @return true if verbose mode is on.
      */
-    public final boolean isVerbose() {
+    public final boolean isVerbose()
+    {
         return verbose;
     }
 
     /**
      * No validation beyond those done by the maven plugin occur at this time.
-     * 
+     *
      * @throws XmlBeansException Currently not used.
      */
-    public final void validate() throws XmlBeansException {
+    public final void validate() throws XmlBeansException
+    {
     }
 
-    public void setPluginArtifacts(List pluginArtifacts) {
+    public void setPluginArtifacts( List pluginArtifacts )
+    {
         this.pluginArtifacts = pluginArtifacts;
     }
 }

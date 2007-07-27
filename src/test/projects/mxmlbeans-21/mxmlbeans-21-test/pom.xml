@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.codehaus.mojo</groupId>
@@ -22,26 +22,26 @@
         </executions>
         <inherited>true</inherited>
         <configuration>
-           <xsdJars>
-              <xsdJar implementation="java.lang.String">org.codehaus.mojo:xmlbeans-mxmlbeans-21-jar</xsdJar>
-           </xsdJars>
-           <!-- try to only build a single schema from the jar file. 
-           -->
-           <sourceSchemas>
-               <sourceSchema>subdir/datetime.xsd</sourceSchema>
-           </sourceSchemas>
+          <xsdJars>
+            <xsdJar implementation="java.lang.String">org.codehaus.mojo:xmlbeans-mxmlbeans-21-jar</xsdJar>
+          </xsdJars>
+          <!-- try to only build a single schema from the jar file.
+          -->
+          <sourceSchemas>
+            <sourceSchema>subdir/datetime.xsd</sourceSchema>
+          </sourceSchemas>
         </configuration>
       </plugin>
     </plugins>
   </build>
-  
+
   <dependencies>
-      <dependency>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>xmlbeans-mxmlbeans-21-jar</artifactId>
-          <version>${pom.version}</version>
-          <scope>provided</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>xmlbeans-mxmlbeans-21-jar</artifactId>
+      <version>${pom.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
 </project>

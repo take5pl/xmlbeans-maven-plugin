@@ -11,11 +11,11 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>xmlbeans-maven-plugin</artifactId>
         <executions>
-           <execution>
-              <goals>
-                 <goal>xmlbeans</goal>
-              </goals>
-           </execution>
+          <execution>
+            <goals>
+              <goal>xmlbeans</goal>
+            </goals>
+          </execution>
         </executions>
         <inherited>true</inherited>
       </plugin>

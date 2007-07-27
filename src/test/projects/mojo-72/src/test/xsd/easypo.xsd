@@ -12,10 +12,10 @@
      See the License for the specific language governing permissions and
      limitations under the License. -->
 <xs:schema
-   xmlns:xs="http://www.w3.org/2001/XMLSchema"
-   xmlns:po="http://openuri.org/easypo"
-   targetNamespace="http://openuri.org/easypo"
-   elementFormDefault="qualified">
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:po="http://openuri.org/easypo"
+        targetNamespace="http://openuri.org/easypo"
+        elementFormDefault="qualified">
 
   <xs:element name="purchase-order">
     <xs:complexType>

@@ -7,7 +7,9 @@
   <body>
     <section name="Introduction">
       <p>
-         This plugin adds support for the 2.0 version of the <a href="http://xmlbeans.apache.org/">Apache XML Beans project</a>. 
+        This plugin adds support for the compiler of the 2.3.0 version of the
+        <a href="http://xmlbeans.apache.org/">Apache XML Beans project</a>
+        .
       </p>
     </section>
   </body>

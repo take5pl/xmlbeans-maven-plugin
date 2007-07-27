@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>mojo</artifactId>
     <groupId>org.codehaus.mojo</groupId>
@@ -10,15 +11,23 @@
   <name>Maven XML Beans Plugin</name>
   <version>2.3.1-SNAPSHOT</version>
 
+  <description>Runs the xmlbeans parser/code generator against schemas in files and dependent jars.</description>
+  <scm>
+    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/xmlbeans-maven-plugin</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/xmlbeans-maven-plugin
+    </developerConnection>
+    <url>http://svn.codehaus.org/mojo/trunk/mojo/xmlbeans-maven-plugin</url>
+  </scm>
+
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MXMLBEANS</url>
   </issueManagement>
 
+  <!-- n.b. to get test 21 to pass you must change to src/test/mxmlbeans-21/mxmlbeans-21-jar
+  and build the project with mvn install to get it into your local repo so the mxmlbeans-21-test project can find it -->
   <build>
     <plugins>
-      <!--
-    -->
       <plugin>
         <artifactId>maven-invoker-plugin</artifactId>
         <version>1.0</version>
@@ -41,7 +50,7 @@
       </plugin>
     </plugins>
   </build>
-  
+
   <developers>
 
     <developer>
@@ -51,7 +60,7 @@
       <organization>Apache Geronimo Project</organization>
       <organizationUrl>http://geronimo.apache.org</organizationUrl>
       <roles>
-          <role>Maintainer</role>
+        <role>Maintainer</role>
       </roles>
       <timezone>EST</timezone>
     </developer>
@@ -61,84 +70,84 @@
       <organization>Apache Maven Project</organization>
       <organizationUrl>http://maven.apache.org</organizationUrl>
       <roles>
-          <role>Port of Original Code</role>
+        <role>Port of Original Code</role>
       </roles>
     </developer>
   </developers>
-  
+
   <contributors>
     <contributor>
       <name>Terence Haddock</name>
       <email>protected</email>
       <roles>
-          <role>Patch Contributor</role>
+        <role>Patch Contributor</role>
       </roles>
     </contributor>
     <contributor>
       <name>Nathan Sowatskey</name>
       <email>protected</email>
       <roles>
-          <role>Active User</role>
+        <role>Active User</role>
       </roles>
     </contributor>
     <contributor>
       <name>Dan Allen</name>
       <email>protected</email>
       <roles>
-          <role>Patch Contributor</role>
+        <role>Patch Contributor</role>
       </roles>
     </contributor>
     <contributor>
       <name>Brian Bonner</name>
       <email>protected</email>
       <roles>
-          <role>Active User</role>
+        <role>Active User</role>
       </roles>
     </contributor>
     <contributor>
       <name>Piotr Burdylo</name>
       <email>protected</email>
       <roles>
-          <role>Active User</role>
+        <role>Active User</role>
       </roles>
     </contributor>
     <contributor>
       <name>Mike Perham</name>
       <email>protected</email>
       <roles>
-          <role>Active User</role>
+        <role>Active User</role>
       </roles>
     </contributor>
     <contributor>
       <name>Martin Desruisseaux</name>
       <email>protected</email>
       <roles>
-          <role>Active User</role>
+        <role>Active User</role>
       </roles>
     </contributor>
     <contributor>
       <name>Rafal Rusin</name>
       <email>protected</email>
       <roles>
-          <role>Patch Contributor</role>
+        <role>Patch Contributor</role>
       </roles>
     </contributor>
     <contributor>
       <name>Christian Domsch</name>
       <email>protected</email>
       <roles>
-          <role>Active User</role>
+        <role>Active User</role>
       </roles>
     </contributor>
     <contributor>
       <name>Anita Kulshreshtha</name>
       <email>protected</email>
       <roles>
-          <role>Active User</role>
+        <role>Active User</role>
       </roles>
     </contributor>
   </contributors>
-  
+
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
