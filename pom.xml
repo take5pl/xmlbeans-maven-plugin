@@ -12,6 +12,12 @@
   <version>2.3.1-SNAPSHOT</version>
 
   <description>Runs the xmlbeans parser/code generator against schemas in files and dependent jars.</description>
+
+  <prerequisites>
+    <maven>2.0.5</maven>
+  </prerequisites>
+  <inceptionYear>2005</inceptionYear>
+
   <scm>
     <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/xmlbeans-maven-plugin</connection>
     <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/xmlbeans-maven-plugin

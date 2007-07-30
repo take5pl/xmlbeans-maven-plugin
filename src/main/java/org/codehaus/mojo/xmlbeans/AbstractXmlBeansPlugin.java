@@ -205,6 +205,8 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     private String javaSource;
 
     /**
+     * Appears to be dependencies of this plugin, to be added to the xmlbeans compile classpath.
+     * 
      * @parameter expression="${plugin.artifacts}"
      * @required
      */
