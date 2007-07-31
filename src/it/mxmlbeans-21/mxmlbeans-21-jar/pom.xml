@@ -18,13 +18,13 @@
 
 <!-- $Id: pom.xml 4347 2007-06-08 04:00:49Z user57 $ -->
 
-<archetype>
-  <id>xmlbeans-maven-plugin</id>
-  <allowPartial>true</allowPartial>
-  <resources>
-    <resource>src/main/xsd/placeholder.txt</resource>
-    <resource>src/main/xsdconfig/placeholder.txt</resource>
-    <resource>src/test/xsd/placeholder.txt</resource>
-    <resource>src/test/xsdconfig/placeholder.txt</resource>
-  </resources>
-</archetype>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>xmlbeans-mxmlbeans-21-jar</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0</version>
+    <name>XMLBeans test dependency for MXMLBEANS-21</name>
+
+</project>

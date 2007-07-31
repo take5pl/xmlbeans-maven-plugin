@@ -19,13 +19,13 @@
 <!-- $Id$ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
-    <groupId>${groupId}</groupId>
-    <artifactId>${artifactId}</artifactId>
+    <artifactId>xmlbeans-mojo-72</artifactId>
+    <groupId>org.codehaus.mojo</groupId>
+    <version>1.0</version>
     <packaging>jar</packaging>
-    <version>${version}</version>
-    <name>TODO: Project name here.</name>
-    <url>http://www.myproject.org</url>
+    <name>Test Case for MOJO-72</name>
     <build>
         <plugins>
             <plugin>
@@ -33,31 +33,17 @@
                 <artifactId>xmlbeans-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id/>
-                        <phase>generate-sources</phase>
                         <goals>
                             <goal>xmlbeans</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>xmlbeans-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id/>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>xmlbeans-test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <inherited>true</inherited>
                 <configuration>
-                    <schemaDirectory>src/test/xsd</schemaDirectory>
+                    <memoryInitialSize>50m</memoryInitialSize>
+                    <memoryMaximumSize>80m</memoryMaximumSize>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>
