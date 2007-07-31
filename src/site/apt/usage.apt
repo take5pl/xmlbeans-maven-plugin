@@ -26,7 +26,7 @@
 Usage
 
  Before you begin it may be necessary to familiarize yourself with the XMLBeans.
-A good tutorial can be found here: http://xmlbeans.apache.org/documentation/index.html.
+A good tutorial can be found {{{http://xmlbeans.apache.org/documentation/index.html}here}}.
 
 *Basic Usage
  
