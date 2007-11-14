@@ -31,6 +31,6 @@ Introduction
 
  * {{{xmlbeans-mojo.html}xmlbeans:xmlbeans}}: Compile XML Beans ouptut from schemas.
  
- * {{{xmlbeans-mojo.html}xmlbeans:xmlbeans-test}}: Compile XML Beans ouptut from schemas for tests.
+ * {{{xmlbeans-test-mojo.html}xmlbeans:xmlbeans-test}}: Compile XML Beans ouptut from schemas for tests.
  
  []
