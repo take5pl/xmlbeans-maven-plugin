@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 
-<!-- $Id: pom.xml 4347 2007-06-08 04:00:49Z user57 $ -->
+<!-- $Id$ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 

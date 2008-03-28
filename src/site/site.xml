@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 
-<!-- $Id: site.xml 4305 2007-06-07 21:41:03Z user57 $ -->
+<!-- $Id$ -->
 
 <project name="Xmlbeans Maven Plugin">
    <bannerLeft>

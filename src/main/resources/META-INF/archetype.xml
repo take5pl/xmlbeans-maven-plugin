@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 
-<!-- $Id: pom.xml 4347 2007-06-08 04:00:49Z user57 $ -->
+<!-- $Id$ -->
 
 <archetype>
   <id>xmlbeans-maven-plugin</id>
