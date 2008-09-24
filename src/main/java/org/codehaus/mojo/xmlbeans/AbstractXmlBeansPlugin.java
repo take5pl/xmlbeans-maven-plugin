@@ -315,12 +315,13 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                         throw new XmlBeansException( XmlBeansException.STALE_FILE_TOUCH,
                                 getStaleFile().getAbsolutePath(), ioe );
                     }
+		    
+		    updateProject( project, compilerParams );
                 }
                 else
                 {
                     getLog().info( "All schema objects are up to date." );
                 }
-                updateProject( project, compilerParams );
             }
             catch ( DependencyResolutionRequiredException drre )
             {
