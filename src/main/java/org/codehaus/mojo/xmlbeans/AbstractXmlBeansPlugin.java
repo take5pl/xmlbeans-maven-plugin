@@ -260,6 +260,8 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     private File[] xsdFiles;
 
+    private File[] wsdlFiles;
+
     /**
      * Empty constructor for the XML Beans plugin.
      */
@@ -342,7 +344,12 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     private boolean hasSchemas() throws XmlBeansException
     {
-        return getXsdFiles().length > 0;
+        int xsds = getXsdFiles().length;
+        int wsdls = getWsdlFiles().length;
+        getLog().debug("Number of XSD Files: " + xsds );
+        getLog().debug("Number of WSDL Files: " + wsdls );
+        
+        return xsds > 0 || wsdls > 0;
     }
 
     protected abstract void updateProject( MavenProject project,
@@ -369,30 +376,45 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     }
 
     /**
-     * Returns true of any one of the files in the XSD array are more new than
-     * the <code>staleFlag</code> file.
-     *
-     * @return True if xsd files have been modified since the last build.
-     * @throws XmlBeansException if we cannot locate one of the xsd files
+     * @return True if xsd or wsdl files have been modified since the last build (newer than the <code>staleFlag</code> file).
+     * @throws XmlBeansException if we cannot locate one of the xsd or wsdl files
      */
     private boolean isOutputStale() throws XmlBeansException
     {
-        File[] sourceXsds = getXsdFiles();
         File staleFile = getStaleFile();
         boolean stale = !staleFile.exists();
 
         if ( !stale )
         {
-            getLog().debug( "Stale flag file exists, comparing to xsd's." );
+            getLog().debug( "Stale flag file exists." );
             long staleMod = staleFile.lastModified();
 
-            for ( int i = 0; i < sourceXsds.length; i++ )
+            // check xsds.
+            getLog().debug( "Comparing to xsd's modification time." );
+            final File[] sourceXsds = getXsdFiles();
+            int fileCount = sourceXsds.length;
+            getLog().debug( fileCount + " xsd to compare." );
+            for ( int i = 0; i < fileCount; i++ )
             {
                 if ( sourceXsds[i].lastModified() > staleMod )
                 {
                     getLog().debug( sourceXsds[i].getName() + " is newer than the stale flag file." );
                     stale = true;
                 }
+            }
+            
+            // check wsdls
+            getLog().debug( "Comparing to wsdl's modification time." );
+            final File[] sourceWsdls = getWsdlFiles();
+            fileCount = sourceWsdls.length;
+            getLog().debug( fileCount + " wsdl to compare." );
+            for ( int i = 0; i < fileCount; i++ )
+            {
+                if ( sourceWsdls[i].lastModified() > staleMod )
+                {
+                    getLog().debug( sourceWsdls[i].getName() + " is newer than the stale flag file." );
+                    stale = true;
+        }
             }
         }
         return stale;
@@ -707,16 +729,6 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     }
 
     /**
-     * Currently returns an empty file array.
-     *
-     * @return An empty file array.
-     */
-    public final File[] getWsdlFiles()
-    {
-        return new File[]{};
-    }
-
-    /**
      * Returns the name of the file used to resolve xml entities.
      *
      * @return The entity resolver catalog file location.
@@ -748,8 +760,25 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     public final File[] getXsdFiles() throws XmlBeansException
     {
+        xsdFiles = getFiles(xsdFiles, "**/*.xsd");
+        return xsdFiles;
+    }
 
-        if ( xsdFiles == null )
+    /**
+     * Returns a file array of wsdl files to translate to object models.
+     *
+     * @return An array of wsdl files to be parsed by the schema compiler.
+     */
+    public final File[] getWsdlFiles() throws XmlBeansException
+        {
+        wsdlFiles = getFiles(wsdlFiles, "**/*.wsdl");
+        return wsdlFiles;
+    }
+
+    private File[] getFiles(final File[] schemaFiles, final String includeFilter) throws XmlBeansException {
+
+        File[] results = schemaFiles;
+        if ( schemaFiles == null )
         {
             File schemaDirectory = getSchemaDirectory();
             getLog().debug( "The schema Directory is " + schemaDirectory );
@@ -789,7 +818,9 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                 DirectoryScanner scanner = new DirectoryScanner();
                 scanner.setBasedir( schemaDirectory );
 
-                String[] includes = {"**/*.xsd"};
+                
+                getLog().debug( "Scanning for " + includeFilter );
+                String[] includes = { includeFilter };
                 scanner.setIncludes( includes );
                 scanner.addDefaultExcludes();
 
@@ -807,10 +838,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                 }
             }
 
-            xsdFiles = ( File[] ) schemas.toArray( new File[]{} );
+            results = ( File[] ) schemas.toArray( new File[]{} );
         }
 
-        return xsdFiles;
+        return results;
     }
 
     /**

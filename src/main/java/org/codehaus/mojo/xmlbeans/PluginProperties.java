@@ -87,7 +87,7 @@ interface PluginProperties
      *
      * @return A file array of wsdl files.
      */
-    File[] getWsdlFiles();
+    File[] getWsdlFiles() throws XmlBeansException;
 
     /**
      * Returns the java source files to compile.
