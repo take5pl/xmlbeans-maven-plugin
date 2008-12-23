@@ -32,7 +32,19 @@
     <packaging>maven-plugin</packaging>
     <name>Maven XML Beans Plugin</name>
     <version>2.3.2-SNAPSHOT</version>
-
+    <ciManagement>
+      <system>hudson</system>
+      <url>http://davidkarlsen.com/hudson/job/xmlbeans-maven-plugin/</url>
+      <notifiers>
+        <notifier>
+          <sendOnError>true</sendOnError>
+          <sendOnFailure>true</sendOnFailure>
+          <sendOnSuccess>true</sendOnSuccess>
+          <sendOnWarning>true</sendOnWarning>
+          <type>email</type>
+        </notifier>
+      </notifiers>
+    </ciManagement>
     <description>
         Runs the xmlbeans parser/code generator against schemas in files and dependent jars.
     </description>
