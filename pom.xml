@@ -46,7 +46,7 @@
     </licenses>
     
     <prerequisites>
-        <maven>2.0.5</maven>
+        <maven>2.0.6</maven>
     </prerequisites>
     
     <inceptionYear>2005</inceptionYear>
@@ -252,7 +252,7 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
-            <version>1.4.2</version>
+            <version>1.5.6</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
