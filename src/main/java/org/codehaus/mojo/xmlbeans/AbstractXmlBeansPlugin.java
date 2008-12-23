@@ -174,7 +174,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     /**
      * The location of the catalog used to resolve xml entities.
      *
-     * @parameter expression="${basedir}/src/main/catalog/resolver-catalog.xml"
+     * @parameter expression="${xmlbeans.catalogLocation}" default-value="${basedir}/src/main/catalog/resolver-catalog.xml"
      */
     protected File catalogLocation;
 
@@ -415,9 +415,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * @return Array of classpath entries.
      */
     public final File[] getClasspath()
+        throws DependencyResolutionRequiredException
     {
         List results = new ArrayList();
-        for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
+        for ( Iterator i = project.getCompileClasspathElements().iterator(); i.hasNext(); )
         {
             Artifact a = ( Artifact ) i.next();
             if ( a.getFile() != null && ( "jar".equals( a.getType() ) || "zip".equals( a.getType() ) ) )

@@ -77,7 +77,7 @@ public class TestXmlBeansMojo
     /**
      * Set a location to generate CLASS files into.
      *
-     * @parameter expression="${project.build.directory}/generated-classes/test-xmlbeans"
+     * @parameter expression="${xmlbeans.classGenerationDirectory}" default-value="${project.build.directory}/generated-classes/test-xmlbeans"
      * @required
      */
     protected File classGenerationDirectory;
@@ -85,7 +85,7 @@ public class TestXmlBeansMojo
     /**
      * Set a location to generate JAVA files into.
      *
-     * @parameter expression="${project.build.directory}/generated-sources/test-xmlbeans"
+     * @parameter expression="${xmlbeans.sourceGenerationDirectory}" default-value="${project.build.directory}/generated-sources/test-xmlbeans"
      * @required
      */
     protected File sourceGenerationDirectory;
@@ -93,7 +93,7 @@ public class TestXmlBeansMojo
     /**
      * The location of the flag file used to determine if the output is stale.
      *
-     * @parameter expression="${project.build.directory}/generated-sources/test-xmlbeans/.staleFlag"
+     * @parameter expression="${xmlbeans.staleFile}" default-value="${project.build.directory}/generated-sources/test-xmlbeans/.staleFlag"
      * @required
      */
     protected File staleFile;
@@ -102,7 +102,7 @@ public class TestXmlBeansMojo
      * Default xmlConfigs directory. If no xmlConfigs list is specified, this
      * one is checked automatically.
      *
-     * @parameter expression="${basedir}/src/test/xsdconfig"
+     * @parameter expression="${xmlbeans.defaultXmlConfigDir}" default-value="${basedir}/src/test/xsdconfig"
      */
     protected File defaultXmlConfigDir;
 
