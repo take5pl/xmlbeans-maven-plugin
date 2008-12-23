@@ -25,6 +25,13 @@
     <version>1.0</version>
     <packaging>jar</packaging>
     <name>Test Case for MXMLBEANS-3</name>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.xmlbeans</groupId>
+        <artifactId>xmlbeans</artifactId>
+        <version>2.4.0</version>
+      </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>

@@ -452,8 +452,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     public final File[] getClasspath()
     {
-        List results = new ArrayList( project.getArtifacts().size()
-                + project.getPluginArtifacts().size() );
+        List results = new ArrayList();
         for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
         {
             Artifact a = ( Artifact ) i.next();
@@ -462,27 +461,6 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                 results.add( a.getFile() );
             }
         }
-
-        // TODO: use addArtifacts
-        Set set = new HashSet( project.getDependencyArtifacts() );
-
-        if ( pluginArtifacts != null )
-        {
-            for ( Iterator i = pluginArtifacts.iterator(); i.hasNext(); )
-            {
-                Artifact a = ( Artifact ) i.next();
-                if ( a.getFile() != null && ( "jar".equals( a.getType() ) || "zip".equals( a.getType() ) ) )
-                {
-                    results.add( a.getFile() );
-
-                    a = factory.createArtifact( a.getGroupId(), a.getArtifactId(), a.getVersion(),
-                            Artifact.SCOPE_COMPILE, a.getType() );
-                    set.add( a );
-                }
-            }
-        }
-
-        project.setDependencyArtifacts( set );
 
         return ( File[] ) results.toArray( EMPTY_FILE_ARRAY );
     }
