@@ -29,8 +29,6 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -205,35 +203,11 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     private String javaSource;
 
     /**
-     * Appears to be dependencies of this plugin, to be added to the xmlbeans compile classpath.
-     * 
-     * @parameter expression="${plugin.artifacts}"
-     * @required
-     */
-    private List pluginArtifacts;
-
-    /**
      * @parameter expression="${project.artifactMap}"
      * @required
      * @readonly
      */
     private Map artifactMap;
-
-    /**
-     * The repository for libraries we depend on.
-     *
-     * @parameter expression="${localRepository}"
-     * @required
-     * @readonly
-     */
-    private ArtifactRepository localRepository;
-
-    /**
-     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
-     * @required
-     * @readonly
-     */
-    private ArtifactFactory factory;
 
     /**
      * A reference to the Maven Project metadata.
@@ -418,16 +392,6 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
             }
         }
         return stale;
-    }
-
-    /**
-     * Gives the plugin a reference to the local repository.
-     *
-     * @param repository The local repository.
-     */
-    public final void setLocalRepository( final ArtifactRepository repository )
-    {
-        localRepository = repository;
     }
 
     public abstract File getBaseDir();
@@ -960,8 +924,4 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     {
     }
 
-    public void setPluginArtifacts( List pluginArtifacts )
-    {
-        this.pluginArtifacts = pluginArtifacts;
-    }
 }
