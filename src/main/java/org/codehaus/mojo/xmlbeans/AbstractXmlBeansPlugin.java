@@ -420,11 +420,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
         List results = new ArrayList();
         for ( Iterator i = project.getCompileClasspathElements().iterator(); i.hasNext(); )
         {
-            Artifact a = ( Artifact ) i.next();
-            if ( a.getFile() != null && ( "jar".equals( a.getType() ) || "zip".equals( a.getType() ) ) )
-            {
-                results.add( a.getFile() );
-            }
+            results.add( new File( (String) i.next() ) );
         }
 
         return ( File[] ) results.toArray( EMPTY_FILE_ARRAY );
