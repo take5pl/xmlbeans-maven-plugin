@@ -37,6 +37,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.xmlbeans.impl.tool.SchemaCompiler;
 import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
 import org.xml.sax.EntityResolver;
 
 /**
@@ -772,6 +773,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                 for ( Iterator iterator = sourceSchemas.iterator(); iterator.hasNext(); )
                 {
                     String schemaName = ( String ) iterator.next();
+                    String ext = FileUtils.getExtension(schemaName);
+                    if (!includeFilter.endsWith(ext)) {
+                        continue;
+                    }
                     nextFile = new File( schemaDirectory, schemaName );
                     if ( nextFile.exists() )
                     {

@@ -25,13 +25,6 @@
     <packaging>pom</packaging>
     <version>1.0</version>
     <name>XMLBeans testcase for MXMLBEANS-21</name>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.xmlbeans</groupId>
-        <artifactId>xmlbeans</artifactId>
-        <version>2.4.0</version>
-      </dependency>
-    </dependencies>
     <modules>
         <module>mxmlbeans-21-jar</module>
         <module>mxmlbeans-21-test</module>

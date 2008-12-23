@@ -25,6 +25,18 @@
     <packaging>jar</packaging>
     <version>1.0</version>
     <name>XMLBeans discrete xsd's in a jar test for MXMLBEANS-21</name>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.xmlbeans</groupId>
+        <artifactId>xmlbeans</artifactId>
+        <version>2.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xmlbeans-mxmlbeans-21-jar</artifactId>
+        <version>${pom.version}</version>
+      </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -51,14 +63,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>xmlbeans-mxmlbeans-21-jar</artifactId>
-            <version>${pom.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
 </project>
