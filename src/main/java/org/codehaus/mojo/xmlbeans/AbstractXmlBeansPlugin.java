@@ -602,7 +602,6 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     public final Set getMdefNamespaces()
     {
-    	getLog().info("multiply defined namespaces: "+mdefNamespaces);
         return mdefNamespaces;
     }
 
