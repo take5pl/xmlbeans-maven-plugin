@@ -69,6 +69,13 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     private File outputJar;
 
     /**
+     * Define a set of Namespaces for which to ignore duplicate errors.
+     * 
+     * @parameter
+     */
+    private Set mdefNamespaces;
+    
+    /**
      * Set to true to permit the compiler to download URLs for imports and
      * includes. Defaults to false, meaning all imports and includes must be
      * copied locally.
@@ -595,7 +602,8 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     public final Set getMdefNamespaces()
     {
-        return null;
+    	getLog().info("multiply defined namespaces: "+mdefNamespaces);
+        return mdefNamespaces;
     }
 
     /**
