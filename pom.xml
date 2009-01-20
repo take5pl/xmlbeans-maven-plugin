@@ -233,7 +233,7 @@
     
     <profiles>
         <profile>
-            <id>super-helpful-integration-tests</id>
+            <id>run-its</id>
             
             <activation>
                 <property>
