@@ -755,10 +755,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                     }
                     else
                     {
-                        String[] fields = new String[2];
+                        String[] fields = new String[3];
                         fields[0] = schemaName;
                         fields[1] = schemaDirectory.getAbsolutePath();
-                        fields[3] = ( artifactMap.isEmpty() ? "" : " or the schema artifact(s)" );
+                        fields[2] = ( artifactMap.isEmpty() ? "" : " or the schema artifact(s)" );
                         throw new XmlBeansException( XmlBeansException.MISSING_SCHEMA_FILE, fields );
                     }
                 }
