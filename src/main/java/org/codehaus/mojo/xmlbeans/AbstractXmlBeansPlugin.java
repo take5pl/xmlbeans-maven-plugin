@@ -269,7 +269,8 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
             {
                 SchemaCompiler.Parameters compilerParams = ParameterAdapter
                         .getCompilerParameters( this );
-                if ( isOutputStale() )
+                boolean stale = isOutputStale();
+                if (stale)
                 {
                     try
                     {
@@ -299,12 +300,12 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                                 getStaleFile().getAbsolutePath(), ioe );
                     }
 		    
-		    updateProject( project, compilerParams );
                 }
                 else
                 {
                     getLog().info( "All schema objects are up to date." );
                 }
+                updateProject( project, compilerParams, stale);
             }
             catch ( DependencyResolutionRequiredException drre )
             {
@@ -333,8 +334,8 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
         return xsds > 0 || wsdls > 0;
     }
 
-    protected abstract void updateProject( MavenProject project,
-                                           SchemaCompiler.Parameters compilerParams ) throws DependencyResolutionRequiredException, XmlBeansException;
+    protected abstract void updateProject(MavenProject project,
+                                          SchemaCompiler.Parameters compilerParams, boolean stale) throws DependencyResolutionRequiredException, XmlBeansException;
 
     protected abstract List getXsdJars();
 

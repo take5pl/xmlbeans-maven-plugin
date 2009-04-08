@@ -114,25 +114,28 @@ public class TestXmlBeansMojo
     }
 
 
-    protected void updateProject( MavenProject project, SchemaCompiler.Parameters compilerParams )
+    protected void updateProject( MavenProject project, SchemaCompiler.Parameters compilerParams, boolean stale )
             throws DependencyResolutionRequiredException, XmlBeansException
     {
         project.addTestCompileSourceRoot( compilerParams.getSrcDir().getAbsolutePath() );
 
-        File outputDirectory = new File( project.getBuild().getTestOutputDirectory() );
-        if ( !outputDirectory.exists() )
+        if ( stale )
         {
-            outputDirectory.mkdirs();
-        }
+            File outputDirectory = new File( project.getBuild().getTestOutputDirectory() );
+            if ( !outputDirectory.exists() )
+            {
+                outputDirectory.mkdirs();
+            }
 
-        getLog().debug( "Copying generated test classes into the output directory." );
-        try
-        {
-            FileUtils.copyDirectoryStructure( compilerParams.getClassesDir(), outputDirectory );
-        }
-        catch ( IOException ex )
-        {
-            throw new XmlBeansException( XmlBeansException.COPY_CLASSES, outputDirectory.getAbsolutePath(), ex );
+            getLog().debug( "Copying generated test classes into the output directory." );
+            try
+            {
+                FileUtils.copyDirectoryStructure( compilerParams.getClassesDir(), outputDirectory );
+            }
+            catch ( IOException ex )
+            {
+                throw new XmlBeansException( XmlBeansException.COPY_CLASSES, outputDirectory.getAbsolutePath(), ex );
+            }
         }
 
     }
