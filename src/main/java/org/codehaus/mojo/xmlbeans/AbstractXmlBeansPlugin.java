@@ -17,16 +17,6 @@ package org.codehaus.mojo.xmlbeans;
  *  limitations under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
@@ -36,6 +26,16 @@ import org.apache.xmlbeans.impl.tool.SchemaCompiler;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.xml.sax.EntityResolver;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p/>
@@ -56,6 +56,7 @@ import org.xml.sax.EntityResolver;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:kris.bravo@corridor-software.us">Kris Bravo</a>
  * @version $Id$
+ * @noinspection UnusedDeclaration
  */
 public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements PluginProperties
 {
@@ -485,7 +486,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * Recursively travers the file list and it's subdirs and produce a single
      * flat list of the files.
      *
-     * @param fileList
+     * @param fileList list of files
      * @return files
      */
     private final List getFileList( List fileList ) throws XmlBeansException
@@ -495,7 +496,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
             getLog().debug( "A list was given." );
             List files = new ArrayList();
 
-            File nextFile = null;
+            File nextFile;
             DirectoryScanner scanner = new DirectoryScanner();
 //            String[] includes = {"**/*"};
 //            scanner.setIncludes(includes);
@@ -562,8 +563,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     public final Collection getErrorListeners()
     {
-        Collection listener = new ArrayList();
-        return listener;
+        return new ArrayList();
     }
 
     /**
@@ -722,77 +722,104 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
         return wsdlFiles;
     }
 
-    private File[] getFiles(final File[] schemaFiles, final String includeFilter) throws XmlBeansException {
-
-        File[] results = schemaFiles;
-        if ( schemaFiles == null )
+    private File[] getFiles( final File[] schemaFiles, final String includeFilter )
+        throws XmlBeansException
+    {
+        // Already got files once before, so no need to do the work again
+        if ( schemaFiles != null )
         {
-            File schemaDirectory = getSchemaDirectory();
-            getLog().debug( "The schema Directory is " + schemaDirectory );
-
-            final List schemas = new ArrayList();
-            // collect artifacts first.
-            Map artifactSchemas = getArtifactSchemas();
-
-            // take care of the schema directory next.
-            if ( sourceSchemas != null )
-            {
-                File nextFile = null;
-                for ( Iterator iterator = sourceSchemas.iterator(); iterator.hasNext(); )
-                {
-                    String schemaName = ( String ) iterator.next();
-                    String ext = FileUtils.getExtension(schemaName);
-                    if (!includeFilter.endsWith(ext)) {
-                        continue;
-                    }
-                    nextFile = new File( schemaDirectory, schemaName );
-                    if ( nextFile.exists() )
-                    {
-                        schemas.add( nextFile );
-                    }
-                    else if ( artifactSchemas.containsKey( schemaName ) )
-                    {
-                        schemas.add( artifactSchemas.get( schemaName ) );
-                    }
-                    else
-                    {
-                        String[] fields = new String[3];
-                        fields[0] = schemaName;
-                        fields[1] = schemaDirectory.getAbsolutePath();
-                        fields[2] = ( artifactMap.isEmpty() ? "" : " or the schema artifact(s)" );
-                        throw new XmlBeansException( XmlBeansException.MISSING_SCHEMA_FILE, fields );
-                    }
-                }
-            }
-            else if ( schemaDirectory.exists() )
-            {
-                DirectoryScanner scanner = new DirectoryScanner();
-                scanner.setBasedir( schemaDirectory );
-
-                
-                getLog().debug( "Scanning for " + includeFilter );
-                String[] includes = { includeFilter };
-                scanner.setIncludes( includes );
-                scanner.addDefaultExcludes();
-
-                scanner.setCaseSensitive( false );
-                scanner.scan();
-
-                String[] files = scanner.getIncludedFiles();
-                if ( files != null )
-                {
-                    for ( int i = 0; i < files.length; i++ )
-                    {
-                        getLog().debug( "Adding " + files[i] );
-                        schemas.add( new File( schemaDirectory, files[i] ) );
-                    }
-                }
-            }
-
-            results = ( File[] ) schemas.toArray( new File[]{} );
+            return schemaFiles;
         }
 
-        return results;
+        final List schemas = new ArrayList();
+
+        File schemaDirectory = getSchemaDirectory();
+        getLog().debug( "The schema Directory is " + schemaDirectory );
+
+        // if list of schemas to process exists, add schemas from xsdJars and schemaDirectory only
+        if ( sourceSchemas != null )
+        {
+            // collect schemas from artifacts
+            Map artifactSchemas = getArtifactSchemas();
+
+            File nextFile;
+            for ( Iterator iterator = sourceSchemas.iterator(); iterator.hasNext(); )
+            {
+                String schemaName = (String) iterator.next();
+                String ext = FileUtils.getExtension( schemaName );
+                if ( !includeFilter.endsWith( ext ) )
+                {
+                    continue;
+                }
+
+                nextFile = new File( schemaDirectory, schemaName );
+                if ( nextFile.exists() )
+                {
+                    // add schema if it exists in schemaDirectory
+                    schemas.add( nextFile );
+                }
+                else if ( artifactSchemas.containsKey( schemaName ) )
+                {
+                    // add schema if it's in an artfact
+                    schemas.add( artifactSchemas.get( schemaName ) );
+                }
+                else
+                {
+                    // throw exception if schema can't be found
+                    String[] fields = new String[3];
+                    fields[0] = schemaName;
+                    fields[1] = schemaDirectory.getAbsolutePath();
+                    fields[2] = ( artifactMap.isEmpty() ? "" : " or the schema artifact(s)" );
+                    throw new XmlBeansException( XmlBeansException.MISSING_SCHEMA_FILE, fields );
+                }
+            }
+            return (File[]) schemas.toArray( new File[schemas.size()] );
+        }
+
+        // if list of schemas to process was not provided
+
+        // add all schemas from xsdJars that match filter
+        Map artifactSchemas = getArtifactSchemas();
+        if ( !artifactSchemas.isEmpty() )
+        {
+            File nextFile;
+            for ( Iterator fileIterator = artifactSchemas.values().iterator(); fileIterator.hasNext(); )
+            {
+                nextFile = (File) fileIterator.next();
+                String ext = FileUtils.getExtension( nextFile.getName() );
+                if ( includeFilter.endsWith( ext ) )
+                {
+                    schemas.add( nextFile );
+                }
+            }
+        }
+
+        // add all schemas from xsdJars that match filter
+        if ( schemaDirectory.exists() )
+        {
+            DirectoryScanner scanner = new DirectoryScanner();
+            scanner.setBasedir( schemaDirectory );
+
+            getLog().debug( "Scanning for " + includeFilter );
+            String[] includes = {includeFilter};
+            scanner.setIncludes( includes );
+            scanner.addDefaultExcludes();
+
+            scanner.setCaseSensitive( false );
+            scanner.scan();
+
+            String[] files = scanner.getIncludedFiles();
+            if ( files != null )
+            {
+                for ( int i = 0; i < files.length; i++ )
+                {
+                    getLog().debug( "Adding " + files[i] );
+                    schemas.add( new File( schemaDirectory, files[i] ) );
+                }
+            }
+        }
+
+        return (File[]) schemas.toArray( new File[schemas.size()] );
     }
 
     /**
@@ -814,7 +841,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
         int count = xsdJars.size();
 
         // Collect the file paths to the actual jars
-        Artifact nextArtifact = null;
+        Artifact nextArtifact;
         getLog().debug( "looking for artifact schemas." );
 
         for ( int i = 0; i < count; i++ )
