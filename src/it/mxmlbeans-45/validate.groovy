@@ -5,3 +5,4 @@ assert file.exists()
 // should exist since sourceSchema was not specified
 file = new File(basedir, 'mxmlbeans-45-test/target/classes/org/apache/xmlbeans/samples/datetime/DatetimeDocument.class')
 assert file.exists()
+return true

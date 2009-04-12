@@ -16,4 +16,5 @@ for ( String filename in[
    	"target/foo/WEB-INF/lib/xml-resolver-1.2.jar"] ) {
 	def file = new File( basedir, filename )
 	assert !file.exists()
+	return true
 }
