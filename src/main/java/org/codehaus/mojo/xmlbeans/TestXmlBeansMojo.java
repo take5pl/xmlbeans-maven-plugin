@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.model.Resource;
 import org.apache.xmlbeans.impl.tool.SchemaCompiler;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -118,26 +119,10 @@ public class TestXmlBeansMojo
             throws DependencyResolutionRequiredException, XmlBeansException
     {
         project.addTestCompileSourceRoot( compilerParams.getSrcDir().getAbsolutePath() );
-
-        if ( stale )
-        {
-            File outputDirectory = new File( project.getBuild().getTestOutputDirectory() );
-            if ( !outputDirectory.exists() )
-            {
-                outputDirectory.mkdirs();
-            }
-
-            getLog().debug( "Copying generated test classes into the output directory." );
-            try
-            {
-                FileUtils.copyDirectoryStructure( compilerParams.getClassesDir(), outputDirectory );
-            }
-            catch ( IOException ex )
-            {
-                throw new XmlBeansException( XmlBeansException.COPY_CLASSES, outputDirectory.getAbsolutePath(), ex );
-            }
-        }
-
+        Resource resource = new Resource();
+        resource.setDirectory(compilerParams.getClassesDir().getAbsolutePath());
+        resource.setFiltering(false);
+        project.addTestResource(resource);
     }
 
     /**
