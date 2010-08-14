@@ -20,6 +20,7 @@ package org.codehaus.mojo.xmlbeans;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -114,6 +115,24 @@ public class CompileXmlBeansMojo
     {
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @return Array of compile scoped classpath entries.
+     * @throws DependencyResolutionRequiredException Plugin wasn't annotated with requiresDependencyResolution 
+     *     and compile scope
+     */
+    public final File[] getClasspath()
+        throws DependencyResolutionRequiredException
+    {
+        List results = new ArrayList();
+        for ( Iterator i = project.getCompileClasspathElements().iterator(); i.hasNext(); )
+        {
+            results.add( new File( (String) i.next() ) );
+        }
+
+        return (File[]) results.toArray( EMPTY_FILE_ARRAY );
+    }
 
     protected void updateProject( MavenProject project, SchemaCompiler.Parameters compilerParams, boolean stale )
             throws DependencyResolutionRequiredException, XmlBeansException

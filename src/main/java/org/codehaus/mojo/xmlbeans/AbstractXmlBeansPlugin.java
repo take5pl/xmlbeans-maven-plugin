@@ -235,7 +235,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     /**
      *
      */
-    private static final File[] EMPTY_FILE_ARRAY = new File[0];
+    protected static final File[] EMPTY_FILE_ARRAY = new File[0];
 
     /**
      * Files to parse and generate models for.
@@ -422,18 +422,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * project.
      *
      * @return Array of classpath entries.
+     * @throws DependencyResolutionRequiredException Plugin wasn't annotated with the right requiresDependencyResolution
      */
-    public final File[] getClasspath()
-        throws DependencyResolutionRequiredException
-    {
-        List results = new ArrayList();
-        for ( Iterator i = project.getCompileClasspathElements().iterator(); i.hasNext(); )
-        {
-            results.add( new File( (String) i.next() ) );
-        }
-
-        return ( File[] ) results.toArray( EMPTY_FILE_ARRAY );
-    }
+    public abstract File[] getClasspath()
+        throws DependencyResolutionRequiredException;
 
     /**
      * Returns null. Currently the compiler preference isn't passwed to the xml

@@ -18,15 +18,14 @@ package org.codehaus.mojo.xmlbeans;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.model.Resource;
+import org.apache.maven.project.MavenProject;
 import org.apache.xmlbeans.impl.tool.SchemaCompiler;
-import org.codehaus.plexus.util.FileUtils;
 
 /**
  * <p>A Maven 2 plugin which parses xsd files and produces a corresponding object
@@ -45,7 +44,7 @@ import org.codehaus.plexus.util.FileUtils;
  * @version $Id$
  * @goal xmlbeans-test
  * @phase generate-test-sources
- * @requiresDependencyResolution compile
+ * @requiresDependencyResolution test
  * @description Creates java beans which map to XML schemas.
  */
 public class TestXmlBeansMojo
@@ -114,6 +113,24 @@ public class TestXmlBeansMojo
     {
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @return Array of test scoped classpath entries.
+     * @throws DependencyResolutionRequiredException Plugin wasn't annotated with requiresDependencyResolution 
+     *     and test scope 
+     */
+    public final File[] getClasspath()
+        throws DependencyResolutionRequiredException
+    {
+        List results = new ArrayList();
+        for ( Iterator i = project.getTestClasspathElements().iterator(); i.hasNext(); )
+        {
+            results.add( new File( (String) i.next() ) );
+        }
+
+        return (File[]) results.toArray( EMPTY_FILE_ARRAY );
+    }
 
     protected void updateProject( MavenProject project, SchemaCompiler.Parameters compilerParams, boolean stale )
             throws DependencyResolutionRequiredException, XmlBeansException
