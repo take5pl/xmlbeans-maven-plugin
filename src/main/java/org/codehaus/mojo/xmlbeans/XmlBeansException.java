@@ -26,9 +26,9 @@ import org.codehaus.mojo.exception.Error;
 
 /**
  * An error occurring within the XmlBeans plugin. Look, hardcoding strings, bad
- * idea, correct? This subclass of CodedException has all varieties of this
- * exception indicated by a static Error object. To throw an exception, pass the
- * specific Error constant as the first parameter in it's constructor. All
+ * idea, correct? This subclass of {@link CodedException} has all varieties of this
+ * exception indicated by a static {@link Error} object. To throw an exception, pass the
+ * specific {@link Error} constant as the first parameter in it's constructor. All
  * of the error messages themselves may be found in XmlBeansException.properties
  *
  * @author <a href="mailto:kris.bravo@corridor-software.us">Kris Bravo</a>
@@ -91,7 +91,7 @@ public class XmlBeansException
     /**
      * A part specific exception with a specific error code.
      *
-     * @param code
+     * @param code The {@link Error} of this particular exception.
      */
     public XmlBeansException( Error code )
     {
@@ -103,8 +103,8 @@ public class XmlBeansException
      * A part specific exception with an error code and fields in the
      * message.
      *
-     * @param code
-     * @param fields
+     * @param code   The {@link Error} of this particular exception.
+     * @param fields An array of field values to replace fields in the error message.
      */
     public XmlBeansException( Error code, String[] fields )
     {
@@ -116,8 +116,8 @@ public class XmlBeansException
      * A part specific exception with an error code and fields in the
      * message.
      *
-     * @param code
-     * @param field
+     * @param code The {@link Error} of this particular exception.
+     * @param field A single value with which to replace the error message field.
      */
     public XmlBeansException( Error code, String field )
     {
@@ -128,7 +128,7 @@ public class XmlBeansException
     /**
      * Creates a new Coded CAM Exception, given an error code and root cause.
      *
-     * @param code      The Error of this particular exception.
+     * @param code      The {@link Error} of this particular exception.
      * @param exception The root cause of the problem.
      */
     public XmlBeansException( Error code, Throwable exception )
@@ -140,7 +140,7 @@ public class XmlBeansException
     /**
      * Creates a coded exception with fields and a root cause.
      *
-     * @param code      The code key used to look up the error text.
+     * @param code      The {@link Error} of this particular exception.
      * @param field     A single value with which to replace the error message field.
      * @param exception The source of the error.
      */
@@ -153,7 +153,7 @@ public class XmlBeansException
     /**
      * Creates a coded exception with fields and a root cause.
      *
-     * @param code      The code key used to look up the error text.
+     * @param code      The {@link Error} of this particular exception.
      * @param fields    An array of field values to replace fields in the error message.
      * @param exception The source of the error.
      */

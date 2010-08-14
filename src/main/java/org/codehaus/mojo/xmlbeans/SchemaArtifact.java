@@ -58,7 +58,10 @@ public class SchemaArtifact
                 for ( Iterator i = nextSet.iterator(); i.hasNext(); )
                 {
                     fileName = ( String ) i.next();
-                    logger.debug( "Adding " + fileName + "from an artifact." );
+                    if ( logger.isDebugEnabled() )
+                    {
+                        logger.debug( "Adding " + fileName + "from an artifact." );
+                    }
                     xsds.put( fileName, new File( prefix, fileName ) );
                 }
 

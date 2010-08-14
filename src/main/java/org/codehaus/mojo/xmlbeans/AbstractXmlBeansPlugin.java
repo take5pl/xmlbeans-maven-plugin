@@ -184,7 +184,8 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     /**
      * The location of the catalog used to resolve xml entities.
      *
-     * @parameter expression="${xmlbeans.catalogLocation}" default-value="${basedir}/src/main/catalog/resolver-catalog.xml"
+     * @parameter expression="${xmlbeans.catalogLocation}" 
+     *     default-value="${basedir}/src/main/catalog/resolver-catalog.xml"
      */
     protected File catalogLocation;
 
@@ -255,25 +256,24 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
     /**
      * <p/>
-     * Map the parameters to the schema compilers parameter object, make sure
-     * the necessary output directories exist, then call on the schema compiler
-     * to produce the java objects and supporting resources.
+     * Map the parameters to the schema compilers parameter object, make sure the necessary output directories exist,
+     * then call on the schema compiler to produce the java objects and supporting resources.
      * </p>
-     *
+     * 
      * @throws MojoExecutionException Errors occurred during compile.
      * @number MOJO-270
      */
-    public final void execute() throws MojoExecutionException
+    public final void execute()
+        throws MojoExecutionException
     {
 
         if ( hasSchemas() )
         {
             try
             {
-                SchemaCompiler.Parameters compilerParams = ParameterAdapter
-                        .getCompilerParameters( this );
+                SchemaCompiler.Parameters compilerParams = ParameterAdapter.getCompilerParameters( this );
                 boolean stale = isOutputStale();
-                if (stale)
+                if ( stale )
                 {
                     try
                     {
@@ -284,15 +284,13 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                         if ( !result )
                         {
                             StringBuffer errors = new StringBuffer();
-                            for ( Iterator iterator = compilerParams.getErrorListener().iterator(); iterator
-                                    .hasNext(); )
+                            for ( Iterator iter = compilerParams.getErrorListener().iterator(); iter.hasNext(); )
                             {
-                                Object o = iterator.next();
+                                Object o = iter.next();
                                 errors.append( "xml Error" ).append( o );
                                 errors.append( "\n" );
                             }
-                            throw new XmlBeansException( XmlBeansException.COMPILE_ERRORS, errors
-                                    .toString() );
+                            throw new XmlBeansException( XmlBeansException.COMPILE_ERRORS, errors.toString() );
                         }
 
                         touchStaleFile();
@@ -300,22 +298,22 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                     catch ( IOException ioe )
                     {
                         throw new XmlBeansException( XmlBeansException.STALE_FILE_TOUCH,
-                                getStaleFile().getAbsolutePath(), ioe );
+                                                     getStaleFile().getAbsolutePath(), ioe );
                     }
-		    
+
                 }
-                else
+                else if ( getLog().isInfoEnabled() )
                 {
                     getLog().info( "All schema objects are up to date." );
                 }
-                updateProject( project, compilerParams, stale);
+                updateProject( project, compilerParams, stale );
             }
             catch ( DependencyResolutionRequiredException drre )
             {
                 throw new XmlBeansException( XmlBeansException.CLASSPATH_DEPENDENCY, drre );
             }
         }
-        else
+        else if ( getLog().isInfoEnabled() )
         {
             getLog().info( "Nothing to generate." );
         }
@@ -331,14 +329,18 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     {
         int xsds = getXsdFiles().length;
         int wsdls = getWsdlFiles().length;
-        getLog().debug("Number of XSD Files: " + xsds );
-        getLog().debug("Number of WSDL Files: " + wsdls );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Number of XSD Files: " + xsds );
+            getLog().debug( "Number of WSDL Files: " + wsdls );
+        }
         
         return xsds > 0 || wsdls > 0;
     }
 
-    protected abstract void updateProject(MavenProject project,
-                                          SchemaCompiler.Parameters compilerParams, boolean stale) throws DependencyResolutionRequiredException, XmlBeansException;
+    protected abstract void updateProject( MavenProject project, SchemaCompiler.Parameters compilerParams, 
+                                           boolean stale )
+        throws DependencyResolutionRequiredException, XmlBeansException;
 
     protected abstract List getXsdJars();
 
@@ -352,7 +354,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
         {
             staleFile.getParentFile().mkdirs();
             staleFile.createNewFile();
-            getLog().debug( "Stale flag file created." );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Stale flag file created." );
+            }
         }
         else
         {
@@ -361,7 +366,8 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     }
 
     /**
-     * @return True if xsd or wsdl files have been modified since the last build (newer than the <code>staleFlag</code> file).
+     * @return True if xsd or wsdl files have been modified since the last build (newer than the 
+     *     <code>staleFlag</code> file).
      * @throws XmlBeansException if we cannot locate one of the xsd or wsdl files
      */
     private boolean isOutputStale() throws XmlBeansException
@@ -371,33 +377,54 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
         if ( !stale )
         {
-            getLog().debug( "Stale flag file exists." );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Stale flag file exists." );
+            }
             long staleMod = staleFile.lastModified();
 
             // check xsds.
-            getLog().debug( "Comparing to xsd's modification time." );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Comparing to xsd's modification time." );    
+            }
             final File[] sourceXsds = getXsdFiles();
             int fileCount = sourceXsds.length;
-            getLog().debug( fileCount + " xsd to compare." );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( fileCount + " xsd to compare." );
+            }
             for ( int i = 0; i < fileCount; i++ )
             {
                 if ( sourceXsds[i].lastModified() > staleMod )
                 {
-                    getLog().debug( sourceXsds[i].getName() + " is newer than the stale flag file." );
+                    if ( getLog().isDebugEnabled() )
+                    {
+                        getLog().debug( sourceXsds[i].getName() + " is newer than the stale flag file." );
+                    }
                     stale = true;
                 }
             }
             
             // check wsdls
-            getLog().debug( "Comparing to wsdl's modification time." );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Comparing to wsdl's modification time." );
+            }
             final File[] sourceWsdls = getWsdlFiles();
             fileCount = sourceWsdls.length;
-            getLog().debug( fileCount + " wsdl to compare." );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( fileCount + " wsdl to compare." );
+            }
             for ( int i = 0; i < fileCount; i++ )
             {
                 if ( sourceWsdls[i].lastModified() > staleMod )
                 {
-                    getLog().debug( sourceWsdls[i].getName() + " is newer than the stale flag file." );
+                    if ( getLog().isDebugEnabled() )
+                    {
+                        getLog().debug( sourceWsdls[i].getName() + " is newer than the stale flag file." );
+                    }
                     stale = true;
         }
             }
@@ -450,7 +477,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
     public final File[] getConfigFiles() throws XmlBeansException
     {
         File defaultXmlConfigDir = getDefaultXmlConfigDir();
-        getLog().debug( "Creating a list of config files." );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Creating a list of config files." );
+        }
 
         try
         {
@@ -460,10 +490,13 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
             }
             else if ( defaultXmlConfigDir.exists() )
             {
-                getLog().debug( "Examining " + defaultXmlConfigDir + " for config files." );
+                if ( getLog().isDebugEnabled() )
+                {
+                    getLog().debug( "Examining " + defaultXmlConfigDir + " for config files." );
+                }
                 List defaultDir = new ArrayList();
                 defaultDir.add( defaultXmlConfigDir );
-                return ( File[] ) getFileList( defaultDir ).toArray( new File[]{} );
+                return ( File[] ) getFileList( defaultDir ).toArray( EMPTY_FILE_ARRAY );
             }
             else
             {
@@ -483,11 +516,14 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      * @param fileList list of files
      * @return files
      */
-    private final List getFileList( List fileList ) throws XmlBeansException
+    private List getFileList( List fileList ) throws XmlBeansException
     {
         if ( fileList != null )
         {
-            getLog().debug( "A list was given." );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "A list was given." );
+            }
             List files = new ArrayList();
 
             File nextFile;
@@ -512,7 +548,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
                         {
                             for ( int i = 0; i < fileArray.length; i++ )
                             {
-                                getLog().debug( "Adding " + fileArray[i] );
+                                if ( getLog().isDebugEnabled() )
+                                {
+                                    getLog().debug( "Adding " + fileArray[i] );
+                                }
                                 files.add( new File( nextFile, fileArray[i] ) );
                             }
                         }
@@ -532,7 +571,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
         }
         else
         {
-            getLog().debug( "No list was given. Returning." );
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "No list was given. Returning." );
+            }
             return null;
         }
 
@@ -677,7 +719,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     public final boolean hasCatalogFile()
     {
-        getLog().debug( "looking for resolver catalog at " + catalogLocation.getAbsolutePath() );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "looking for resolver catalog at " + catalogLocation.getAbsolutePath() );
+        }
         return catalogLocation.exists();
     }
 
@@ -689,7 +734,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     public final String getCatalogFile()
     {
-        getLog().debug( "Using resolver catalog." );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Using resolver catalog." );
+        }
         return catalogLocation.getAbsolutePath();
     }
 
@@ -701,7 +749,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     public final File[] getXsdFiles() throws XmlBeansException
     {
-        xsdFiles = getFiles(xsdFiles, "**/*.xsd");
+        xsdFiles = getFiles( xsdFiles, "**/*.xsd" );
         return xsdFiles;
     }
 
@@ -712,7 +760,7 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     public final File[] getWsdlFiles() throws XmlBeansException
         {
-        wsdlFiles = getFiles(wsdlFiles, "**/*.wsdl");
+        wsdlFiles = getFiles( wsdlFiles, "**/*.wsdl" );
         return wsdlFiles;
     }
 
@@ -728,7 +776,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
         final List schemas = new ArrayList();
 
         File schemaDirectory = getSchemaDirectory();
-        getLog().debug( "The schema Directory is " + schemaDirectory );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "The schema Directory is " + schemaDirectory );
+        }
 
         // if list of schemas to process exists, add schemas from xsdJars and schemaDirectory only
         if ( sourceSchemas != null )
@@ -793,8 +844,12 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
         {
             DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir( schemaDirectory );
-
-            getLog().debug( "Scanning for " + includeFilter );
+            
+            if ( getLog().isDebugEnabled() )
+            {
+                getLog().debug( "Scanning for " + includeFilter );
+            }
+            
             String[] includes = {includeFilter};
             scanner.setIncludes( includes );
             scanner.addDefaultExcludes();
@@ -807,7 +862,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
             {
                 for ( int i = 0; i < files.length; i++ )
                 {
-                    getLog().debug( "Adding " + files[i] );
+                    if ( getLog().isDebugEnabled() )
+                    {
+                        getLog().debug( "Adding " + files[i] );
+                    }
                     schemas.add( new File( schemaDirectory, files[i] ) );
                 }
             }
@@ -827,7 +885,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
      */
     private Map getArtifactSchemas() throws XmlBeansException
     {
-        getLog().debug( "Artifact count: " + artifactMap.size() );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Artifact count: " + artifactMap.size() );
+        }
         SchemaArtifactLookup lookup = new SchemaArtifactLookup( artifactMap, getLog() );
         Map artifactSchemas = new HashMap();
         List xsdJars = getXsdJars();
@@ -836,7 +897,10 @@ public abstract class AbstractXmlBeansPlugin extends AbstractMojo implements Plu
 
         // Collect the file paths to the actual jars
         Artifact nextArtifact;
-        getLog().debug( "looking for artifact schemas." );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "looking for artifact schemas." );
+        }
 
         for ( int i = 0; i < count; i++ )
         {

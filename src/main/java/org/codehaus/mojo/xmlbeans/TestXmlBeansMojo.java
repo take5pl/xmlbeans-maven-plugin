@@ -79,7 +79,8 @@ public class TestXmlBeansMojo
     /**
      * Set a location to generate CLASS files into.
      *
-     * @parameter expression="${xmlbeans.classGenerationDirectory}" default-value="${project.build.directory}/generated-classes/test-xmlbeans"
+     * @parameter expression="${xmlbeans.classGenerationDirectory}" 
+     *      default-value="${project.build.directory}/generated-classes/test-xmlbeans"
      * @required
      */
     protected File classGenerationDirectory;
@@ -87,7 +88,8 @@ public class TestXmlBeansMojo
     /**
      * Set a location to generate JAVA files into.
      *
-     * @parameter expression="${xmlbeans.sourceGenerationDirectory}" default-value="${project.build.directory}/generated-sources/test-xmlbeans"
+     * @parameter expression="${xmlbeans.sourceGenerationDirectory}" 
+     *      default-value="${project.build.directory}/generated-sources/test-xmlbeans"
      * @required
      */
     protected File sourceGenerationDirectory;
@@ -95,7 +97,8 @@ public class TestXmlBeansMojo
     /**
      * The location of the flag file used to determine if the output is stale.
      *
-     * @parameter expression="${xmlbeans.staleFile}" default-value="${project.build.directory}/generated-sources/test-xmlbeans/.staleFlag"
+     * @parameter expression="${xmlbeans.staleFile}" 
+     *      default-value="${project.build.directory}/generated-sources/test-xmlbeans/.staleFlag"
      * @required
      */
     protected File staleFile;
@@ -135,13 +138,13 @@ public class TestXmlBeansMojo
     }
 
     protected void updateProject( MavenProject project, SchemaCompiler.Parameters compilerParams, boolean stale )
-            throws DependencyResolutionRequiredException, XmlBeansException
+        throws DependencyResolutionRequiredException, XmlBeansException
     {
         project.addTestCompileSourceRoot( compilerParams.getSrcDir().getAbsolutePath() );
         Resource resource = new Resource();
-        resource.setDirectory(compilerParams.getClassesDir().getAbsolutePath());
-        resource.setFiltering(false);
-        project.addTestResource(resource);
+        resource.setDirectory( compilerParams.getClassesDir().getAbsolutePath() );
+        resource.setFiltering( false );
+        project.addTestResource( resource );
     }
 
     /**
@@ -198,6 +201,8 @@ public class TestXmlBeansMojo
 
     /**
      * Returns the list of xsd jars.
+     * 
+     * @return The XSD Jars
      */
     protected List getXsdJars()
     {

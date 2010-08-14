@@ -20,16 +20,14 @@ package org.codehaus.mojo.xmlbeans;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.model.Resource;
+import org.apache.maven.project.MavenProject;
 import org.apache.xmlbeans.impl.tool.SchemaCompiler;
-import org.codehaus.plexus.util.FileUtils;
 
 /**
  * <p>A Maven 2 plugin which parses xsd files and produces a corresponding object
@@ -81,7 +79,8 @@ public class CompileXmlBeansMojo
     /**
      * Set a location to generate CLASS files into.
      *
-     * @parameter expression="${xmlbeans.classGenerationDirectory}" default-value="${project.build.directory}/generated-classes/xmlbeans"
+     * @parameter expression="${xmlbeans.classGenerationDirectory}" 
+     *      default-value="${project.build.directory}/generated-classes/xmlbeans"
      * @required
      */
     protected File classGenerationDirectory;
@@ -89,7 +88,8 @@ public class CompileXmlBeansMojo
     /**
      * Set a location to generate JAVA files into.
      *
-     * @parameter expression="${xmlbeans.sourceGenerationDirectory}" default-value="${project.build.directory}/generated-sources/xmlbeans"
+     * @parameter expression="${xmlbeans.sourceGenerationDirectory}" 
+     *      default-value="${project.build.directory}/generated-sources/xmlbeans"
      * @required
      */
     protected File sourceGenerationDirectory;
@@ -97,7 +97,8 @@ public class CompileXmlBeansMojo
     /**
      * The location of the flag file used to determine if the output is stale.
      *
-     * @parameter expression="${xmlbeans.staleFile}" default-value="${project.build.directory}/generated-sources/xmlbeans/.staleFlag"
+     * @parameter expression="${xmlbeans.staleFile}" 
+     *      default-value="${project.build.directory}/generated-sources/xmlbeans/.staleFlag"
      * @required
      */
     protected File staleFile;
@@ -137,14 +138,18 @@ public class CompileXmlBeansMojo
     }
 
     protected void updateProject( MavenProject project, SchemaCompiler.Parameters compilerParams, boolean stale )
-            throws DependencyResolutionRequiredException, XmlBeansException
+        throws DependencyResolutionRequiredException, XmlBeansException
     {
-        getLog().debug( "Adding " + compilerParams.getSrcDir().getAbsolutePath() + " to the project's compile sources." );
+        if ( getLog().isDebugEnabled() ) 
+        {
+            getLog().debug( "Adding " + compilerParams.getSrcDir().getAbsolutePath() 
+                        + " to the project's compile sources." );
+        }
         project.addCompileSourceRoot( compilerParams.getSrcDir().getAbsolutePath() );
         Resource resource = new Resource();
-        resource.setDirectory(compilerParams.getClassesDir().getAbsolutePath());
-        resource.setFiltering(false);
-        project.addResource(resource);
+        resource.setDirectory( compilerParams.getClassesDir().getAbsolutePath() );
+        resource.setFiltering( false );
+        project.addResource( resource );
     }
 
     /**
@@ -202,6 +207,8 @@ public class CompileXmlBeansMojo
 
     /**
      * Returns the list of xsd jars.
+     * 
+     * @return The xsd jars
      */
     protected List getXsdJars()
     {

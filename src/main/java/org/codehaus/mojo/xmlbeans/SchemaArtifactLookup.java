@@ -64,8 +64,8 @@ public class SchemaArtifactLookup
 
     private class ArtifactReference
     {
-        String groupId;
-        String artifactId;
+        private String groupId;
+        private String artifactId;
 
         private ArtifactReference( String path ) throws XmlBeansException
         {
@@ -87,8 +87,7 @@ public class SchemaArtifactLookup
             if ( candidate instanceof Artifact )
             {
                 Artifact artifact = ( Artifact ) candidate;
-                outcome = groupId.equals( artifact.getGroupId() ) &&
-                        artifactId.equals( artifact.getArtifactId() );
+                outcome = groupId.equals( artifact.getGroupId() ) && artifactId.equals( artifact.getArtifactId() );
             }
             return outcome;
         }
@@ -96,9 +95,10 @@ public class SchemaArtifactLookup
 
         public int hashCode()
         {
+            final int multiplier = 31;
             int result;
             result = ( groupId != null ? groupId.hashCode() : 0 );
-            result = 31 * result + ( artifactId != null ? artifactId.hashCode() : 0 );
+            result = multiplier * result + ( artifactId != null ? artifactId.hashCode() : 0 );
             return result;
         }
     }

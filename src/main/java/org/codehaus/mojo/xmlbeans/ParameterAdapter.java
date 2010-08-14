@@ -118,7 +118,8 @@ public final class ParameterAdapter
                     return is;
                 }
             }
-            System.out.println( "Could not resolve publicId: " + publicId + ", systemId: " + systemId + " from catalog, looking in current directory" );
+            System.out.println( "Could not resolve publicId: " + publicId + ", systemId: " + systemId 
+                                + " from catalog, looking in current directory" );
             return new InputSource( systemId );
         }
 

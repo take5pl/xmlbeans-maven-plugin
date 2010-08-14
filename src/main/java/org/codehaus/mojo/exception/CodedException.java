@@ -107,7 +107,7 @@ public abstract class CodedException
     /**
      * Creates a new Coded Exception, given an error code and root cause.
      *
-     * @param code      The Error of this particular exception.
+     * @param code      The {@link Error} of this particular exception.
      * @param exception The root cause of the problem.
      */
     public CodedException( final Error code, final Throwable exception )

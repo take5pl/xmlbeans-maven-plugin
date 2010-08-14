@@ -52,7 +52,10 @@ public class FilteredJarFile extends JarFile
             nextEntry = ( ( JarEntry ) e.nextElement() );
             if ( !nextEntry.isDirectory() && !isFiltered( nextEntry.getName(), filter ) )
             {
-                logger.debug( "adding and extracting " + nextEntry.getName() );
+                if ( logger.isDebugEnabled() )
+                {
+                    logger.debug( "adding and extracting " + nextEntry.getName() );
+                }
                 extractEntry( prefix, nextEntry );
                 entries.add( nextEntry.getName() );
             }
@@ -69,16 +72,25 @@ public class FilteredJarFile extends JarFile
             {
                 if ( name.endsWith( filter[i] ) )
                 {
-                    logger.debug( "Accepting " + name );
+                    if ( logger.isDebugEnabled() )
+                    {
+                        logger.debug( "Accepting " + name );
+                    }
                     return false;
                 }
             }
-            logger.debug( "Filtering " + name );
+            if ( logger.isDebugEnabled() )
+            {
+                logger.debug( "Filtering " + name );
+            }
             return true;
         }
         else
         {
-            logger.debug( "Filtering out null." );
+            if ( logger.isDebugEnabled() )
+            {
+                logger.debug( "Filtering out null." );
+            }
             return true;
         }
     }
@@ -110,7 +122,10 @@ public class FilteredJarFile extends JarFile
                 while ( true )
                 {
                     int length = ios.read( buf );
-                    if ( length < 0 ) break;
+                    if ( length < 0 )
+                    {
+                        break;
+                    }
                     fos.write( buf, 0, length );
                 }
             }
