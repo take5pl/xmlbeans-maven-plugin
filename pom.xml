@@ -239,19 +239,8 @@
                   <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-invoker-plugin</artifactId>
-                    <version>1.3</version>
                     <configuration>
                       <debug>true</debug>
-                      <projectsDirectory>src/it</projectsDirectory>
-                      <pomIncludes>
-                        <pomInclude>**/pom.xml</pomInclude>
-                      </pomIncludes>
-                      <pomExcludes>
-                        <pomExclude>**/mxmlbeans-21-jar/pom.xml</pomExclude>
-                        <pomExclude>**/mxmlbeans-21-test/pom.xml</pomExclude>
-                        <pomExclude>**/mxmlbeans-45-jar/pom.xml</pomExclude>
-                        <pomExclude>**/mxmlbeans-45-test/pom.xml</pomExclude>                        
-                      </pomExcludes>
                       <postBuildHookScript>validate</postBuildHookScript>
                       <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                       <goals>
@@ -259,9 +248,7 @@
                         <goal>package</goal>
                       </goals>
                       <settingsFile>src/it/settings.xml</settingsFile>
-                       
                       <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-                      
                     </configuration>
                     <executions>
                       <execution>
