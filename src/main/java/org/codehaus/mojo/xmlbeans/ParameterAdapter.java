@@ -83,11 +83,17 @@ public final class ParameterAdapter
         params.setDebug( properties.isDebug() );
         if ( properties.hasCatalogFile() )
         {
-            CatalogManager catalogManager = CatalogManager.getStaticManager();
-            catalogManager.setCatalogFiles( properties.getCatalogFile() );
-            EntityResolver entityResolver = new CatalogResolver();
-            entityResolver = new PassThroughResolver( entityResolver );
-            params.setEntityResolver( entityResolver );
+            // It's better to initialize a new CatalogManager than use an
+            // existing one which might have side effects with other plugins
+            CatalogManager catalogManager = new CatalogManager();
+            catalogManager.setUseStaticCatalog(false);
+            catalogManager.setCatalogFiles(properties.getCatalogFile());
+
+            // Since we have the instance, we can use it to initialize the
+            // CatalogResolver
+            EntityResolver entityResolver = new CatalogResolver(catalogManager);
+            entityResolver = new PassThroughResolver(entityResolver);
+            params.setEntityResolver(entityResolver);
         }
         params.setErrorListener( properties.getErrorListeners() );
         params.setRepackage( properties.getRepackage() );
